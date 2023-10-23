@@ -13,7 +13,7 @@ lib: let
       pypi = info: {
         method = "fetchPypi";
         pname = "array_api_compat";
-        inherit (info) pname version;
+        inherit (info) version;
       };
       dev = info: {
         inherit (info.devRepo) method owner repo;
@@ -26,7 +26,7 @@ lib: let
   meta = info: info // {
     meta = {
       description = "Array API compatibility library";
-      homepage = with devRepo; "https://${site}/${owner}/${repo}";
+      homepage = with info.devRepo; "https://${site}/${owner}/${repo}";
       license = lib.licenses.mit;
       maintainers = with lib.maintainers; [ ];
     } // lib.optionalAttrs (info.type != "dev") {

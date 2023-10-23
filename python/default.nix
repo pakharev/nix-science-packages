@@ -1,6 +1,7 @@
 final: prev: {
-  inherit (final.python.pkgs) fetchPypi;
-  fetchSource = (import ../lib).fetchSource final;
+  fetchSource = (import ../lib).fetchSource (prev // {
+    inherit (final.python.pkgs) fetchPypi;  
+  });
 
   python = prev.python310.override {
     packageOverrides = (self: super: {

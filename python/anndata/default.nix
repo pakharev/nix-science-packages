@@ -14,7 +14,7 @@
 , exceptiongroup
 , array-api-compat
 , allReleases ? import ./releases.nix
-, release ? builtins.head releases
+, release ? builtins.head allReleases
 , info ? (import ./info.nix) lib release
 }: let
   inherit (info) hatch;

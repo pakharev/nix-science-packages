@@ -19,6 +19,10 @@ final: prev: {
           builtins.removeAttrs f [ "mirror" ];
       };
 
+      generic = name: info: {
+        name = "${name}-${info.pname}-${info.version}-source";
+      };
+
       PyPI = info: {
         method = "fetchPypi";
         inherit (info) pname version;

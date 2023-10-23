@@ -3,17 +3,17 @@ lib: let
     pname = "anndata";
     hatch = false;
   } // info;
+  devVersion = info: info // lib.optionalAttrs (info.type == "dev") {
+    version = "${info.version}-dev${builtins.replaceStrings [ "-" ] [ "" ] info.date}";
+  };
   fetcher = with lib.mirrors; resolveFetcher {
     inherit PyPI;
-    dev = info: {
+    dev = info: generic "github" info // {
       method = "fetchFromGitHub";
       owner = "scverse";
       repo = "anndata";
       rev = info.version;
     };
-  };
-  devVersion = info: info // lib.optionalAttrs (info.type == "dev") {
-    version = "${info.version}-dev${builtins.replaceStrings [ "-" ] [ "" ] info.date}";
   };
   meta = info: info // {
     meta = {
@@ -27,7 +27,7 @@ lib: let
   };
 in info: lib.pipe info [
   defaults
-  fetcher
   devVersion
+  fetcher
   meta
 ] 

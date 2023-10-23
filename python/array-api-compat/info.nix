@@ -2,21 +2,21 @@ lib: let
   defaults = info: {
     pname = "array-api-compat";
   } // info;
+  devVersion = info: info // lib.optionalAttrs (info.type == "dev") {
+    version = "${info.version}-dev${builtins.replaceStrings [ "-" ] [ "" ] info.date}";
+  };
   fetcher = with lib.mirrors; resolveFetcher {
     PyPI = info: {
       method = "fetchPypi";
       pname = "array_api_compat";
       inherit (info) version;
     };
-    dev = info: {
+    dev = info: generic "github" info // {
       method = "fetchFromGitHub";
       owner = "data-apis";
       repo = "array-api-compat";
       rev = info.version;
     };
-  };
-  devVersion = info: info // lib.optionalAttrs (info.type == "dev") {
-    version = "${info.version}-dev${builtins.replaceStrings [ "-" ] [ "" ] info.date}";
   };
   meta = info: info // {
     meta = {
@@ -30,7 +30,7 @@ lib: let
   };
 in info: lib.pipe info [
   defaults
-  fetcher
   devVersion
+  fetcher
   meta
 ] 

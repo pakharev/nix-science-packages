@@ -1,6 +1,5 @@
 { lib
 , buildPythonPackage
-, fetchSource
 , setuptools-scm
 , hatchling
 , hatch-vcs
@@ -13,18 +12,18 @@
 , packaging
 , exceptiongroup
 , array-api-compat
+, fetchSource
 , allReleases ? import ./releases.nix
 , release ? builtins.head allReleases
 , info ? (import ./info.nix) lib release
-}: let
-  inherit (info) hatch;
-in buildPythonPackage {
+}: 
+with info; buildPythonPackage {
   format = if hatch
     then "pyproject"
     else "flit";
   disabled = pythonOlder "3.8";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = info.version;
+  SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   nativeBuildInputs = if hatch then [ 
     hatchling hatch-vcs 
@@ -44,7 +43,7 @@ in buildPythonPackage {
     exceptiongroup
   ];
 
-  inherit (info) pname version;
-  src = fetchSource info;
-  meta = info.meta // { inherit allReleases release info; };
+  inherit pname version;
+  src = fetchSource fetcher;
+  meta = meta // { inherit allReleases release info; };
 }

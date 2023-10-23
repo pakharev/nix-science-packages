@@ -1,18 +1,17 @@
 { lib
 , buildPythonPackage
-, fetchSource
 , setuptools-scm
 , pythonOlder
+, fetchSource
 , allReleases ? import ./releases.nix
 , release ? builtins.head allReleases
 , info ? (import ./info.nix) lib release
 }:
-
-buildPythonPackage {
+with info; buildPythonPackage {
   format = "setuptools";
   disabled = pythonOlder "3.7";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = info.version;
+  SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   nativeBuildInputs = [
     setuptools-scm
@@ -21,7 +20,7 @@ buildPythonPackage {
   # requires too much
   doCheck = false;
 
-  inherit (info) pname version;
-  src = fetchSource info;
-  meta = info.meta // { inherit allReleases release info; };
+  inherit pname version;
+  src = fetchSource fetcher;
+  meta = meta // { inherit allReleases release info; };
 }

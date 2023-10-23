@@ -1,20 +1,22 @@
-(builtins.concatMap (r: map (m: r // { 
-  mirror = m;
-  fetcher = r.mirrors.${m};
-}) (builtins.attrNames r.mirrors)) [
+let
+  mapFetchers = release: map (fetcher:
+    (builtins.removeAttrs release [ "fetchers" ]) // { inherit fetcher; }
+  ) release.fetchers;
+in builtins.concatMap mapFetchers [
+  ### common releases
   {
     date = "2023-09-14";
     version = "1.4";
     type = "minor";
-    mirrors = {
-      pypi = {
+    fetchers = [
+      {
+        mirror = "PyPI";
         hash = "sha256-1J8A62a0Ns86YCbW9DwRXT4FijqZNlNrC6wz3UcOi00=";
-      };
-    };
+      }
+      {
+        mirror = "dev";
+	hash = "sha256-rW5Pql+1b012OFGlfY8V259d2ka1WvekXFQQRu0dvMA=";
+      }
+    ];
   }
-]) ++ (map (r: r // { 
-  type = "dev"; 
-  mirror = "dev";
-  version = "${r.version}-dev${builtins.replaceStrings [ "-" ] [ "" ] r.date}";
-}) [
-])
+]

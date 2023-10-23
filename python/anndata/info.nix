@@ -2,39 +2,32 @@ lib: let
   defaults = info: {
     pname = "anndata";
     hatch = false;
-    devRepo = {
-      site = "github.com";
+  } // info;
+  fetcher = with lib.mirrors; resolveFetcher {
+    inherit PyPI;
+    dev = info: {
+      method = "fetchFromGitHub";
       owner = "scverse";
       repo = "anndata";
-      method = "fetchFromGitHub";
+      rev = info.version;
     };
-  } // info;
-  fetchers = let
-    mirrors = {
-      pypi = info: {
-        method = "fetchPypi";
-        inherit (info) pname version;
-      };
-      dev = info: {
-        inherit (info.devRepo) method owner repo;
-        rev = info.version;
-      };
-    };
-  in info: info // {
-    fetcher = mirrors.${info.mirror} info // info.fetcher;
+  };
+  devVersion = info: info // lib.optionalAttrs (info.type == "dev") {
+    version = "${info.version}-dev${builtins.replaceStrings [ "-" ] [ "" ] info.date}";
   };
   meta = info: info // {
     meta = {
       description = "Annotated data";
       license = lib.licenses.bsd3;
       maintainers = with lib.maintainers; [ ];
-      homepage = with info.devRepo; "https://${site}/${owner}/${repo}";
+      homepage = "https://anndata.readthedocs.io/";
     } // lib.optionalAttrs (info.type != "dev") {
-      changelog = with info.devRepo; "https://${site}/${owner}/${repo}/releases/tag/${info.version}";
+      changelog = "https://anndata.readthedocs.io/en/latest/#latest-additions";
     };
   };
 in info: lib.pipe info [
   defaults
-  fetchers
+  fetcher
+  devVersion
   meta
 ] 

@@ -1,8 +1,4 @@
 final: prev: {
-  fetchSource = (import ../lib).fetchSource (prev // {
-    inherit (final.python.pkgs) fetchPypi;  
-  });
-
   python = prev.python310.override {
     packageOverrides = (self: super: {
       array-api-compat = self.callPackage ./array-api-compat {};

@@ -12,11 +12,11 @@ in builtins.concatMap mapFetchers [
     fetchers = [
       {
         mirror = "PyPI";
-	hash = "sha256-++UByX3yMuCNCh9Dj2Y4crZQ+w1RUNK7Byz+UxEPRoA=";
+        hash = "sha256-++UByX3yMuCNCh9Dj2Y4crZQ+w1RUNK7Byz+UxEPRoA=";
       }
       {
         mirror = "dev";
-	hash = "sha256-rW5Pql+1b012OFGlfY8V259d2ka1WvekXFQQRu0dvMA=";
+        hash = "sha256-rW5Pql+1b012OFGlfY8V259d2ka1WvekXFQQRu0dvMA=";
       }
     ];
   }
@@ -27,11 +27,11 @@ in builtins.concatMap mapFetchers [
     fetchers = [
       {
         mirror = "PyPI";
-	hash = "sha256-5bg4PQlyOvZ0yuetDC71PrH4xzlJt/TBgqbjD0IZYyc=";
+        hash = "sha256-5bg4PQlyOvZ0yuetDC71PrH4xzlJt/TBgqbjD0IZYyc=";
       }
       {
         mirror = "dev";
-	hash = "sha256-X6gHlmiTZt+cxGacCASPGaW9BlsMrfR1yw6mwgF5lvs=";
+        hash = "sha256-X6gHlmiTZt+cxGacCASPGaW9BlsMrfR1yw6mwgF5lvs=";
       }
     ];
   }

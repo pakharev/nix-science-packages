@@ -27,6 +27,14 @@ final: prev: {
         method = "fetchPypi";
         inherit (info) pname version;
       };
+
+      CRAN = info: self.mirrors.generic "CRAN" info // {
+        method = "fetchzip";
+	urls = with info; [
+	  "https://cran.r-project.org/src/contrib/${pname}_${version}.tar.gz"
+	  "https://cran.r-project.org/src/contrib/Archive/${pname}/${pname}_${version}.tar.gz"
+	];
+      };
     };
   });
 }

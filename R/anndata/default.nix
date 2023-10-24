@@ -1,19 +1,22 @@
-{ rPackages
-, chooseSource
+{ lib
+, rPackages
 , fetchSource
-, source ? (info: info.release)
+, allReleases ? import ./releases.nix
+, release ? builtins.head allReleases
+, info ? (import ./info.nix) lib release
 }: let
-  info = chooseSource source ./src.json;
   depends = with rPackages; [ 
     assertthat
     Matrix
     reticulate
     R6
   ];
-in rPackages.buildRPackage {
-  name = "anndata";
-  inherit (info) version;
-  src = fetchSource info;
+in with info; rPackages.buildRPackage {
   propagatedBuildInputs = depends;
   nativeBuildInputs = depends;
+
+  inherit version;
+  name = "${pname}-${version}";
+  src = fetchSource fetcher;
+  meta = meta // { inherit allReleases release info; };
 } 

@@ -1,6 +1,4 @@
 final: prev: {
-  fetchSource = (import ../lib).fetchSource final;
-
   rPackages = prev.rPackages.override (old: {
     overrides = old.overrides // {
       reticulate = final.callPackage ./reticulate {};

@@ -3,6 +3,7 @@
 , rPackages
 , icu
 , pkg-config
+, fetchzip
 , fetchSource
 , allReleases ? import ./releases.nix
 , release ? builtins.head allReleases

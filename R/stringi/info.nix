@@ -1,6 +1,6 @@
 lib: let
   defaults = info: {
-    pname = "distances";
+    pname = "stringi";
   } // info;
   fetcher = with lib.mirrors; resolveFetcher {
     inherit CRAN;

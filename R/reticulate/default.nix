@@ -1,9 +1,11 @@
-{ rPackages
+{ lib
+, rPackages
 , fetchSource
-, lib
-, version ? "git-main-2023-09-21"
+, allReleases ? import ./releases.nix
+, release ? builtins.head allReleases
+, info ? (import ./info.nix) lib release
 }: let
-  depends = with rPackages; [
+  depends = with rPackages; [ 
     here
     jsonlite
     Matrix
@@ -14,10 +16,12 @@
     rlang
     withr
   ];
-in rPackages.buildRPackage {
-  name = "reticulate";
-  inherit version;
-  src = fetchSource (import ./src.nix).${version};
+in with info; rPackages.buildRPackage {
   propagatedBuildInputs = depends;
   nativeBuildInputs = depends;
-}
+
+  inherit version;
+  name = "${pname}-${version}";
+  src = fetchSource fetcher;
+  meta = meta // { inherit allReleases release info; };
+} 

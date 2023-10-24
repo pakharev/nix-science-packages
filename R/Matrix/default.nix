@@ -6,6 +6,7 @@
 , info ? (import ./info.nix) lib release
 }: let
   depends = with rPackages; [ 
+    lattice
   ];
 in with info; rPackages.buildRPackage {
   propagatedBuildInputs = depends;

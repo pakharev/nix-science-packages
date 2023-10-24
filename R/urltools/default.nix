@@ -6,6 +6,8 @@
 , info ? (import ./info.nix) lib release
 }: let
   depends = with rPackages; [ 
+    Rcpp
+    triebeard
   ];
 in with info; rPackages.buildRPackage {
   propagatedBuildInputs = depends;

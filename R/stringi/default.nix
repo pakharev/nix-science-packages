@@ -1,9 +1,12 @@
-{ R
+{ lib
+, R
 , rPackages
-, fetchzip
-, lib
 , icu
 , pkg-config
+, fetchSource
+, allReleases ? import ./releases.nix
+, release ? builtins.head allReleases
+, info ? (import ./info.nix) lib release
 }: 
 (lib.makeOverridable ({
   name, version, src,
@@ -21,15 +24,11 @@
   meta.platforms = platforms;
   meta.broken = broken;
   meta.maintainers = maintainers;
-}) {
-  name = "stringi";
-  version = "1.7.12";
-  src = fetchzip {
-    name = "cran-stringi_1.5-8.tar.gz";
-    url = "https://cran.r-project.org/src/contrib/stringi_1.7.12.tar.gz";
-    sha256 = "sha256-uRLo614wr7qp6Elk3nYF5+glKiYxylDuxRgaRUmojZw=";
-  };
-}).overrideDerivation (old: {
+}) (with info; {
+  name = "${pname}-${version}";
+  inherit version;
+  src = fetchSource fetcher;
+})).overrideDerivation (old: {
   nativeBuildInputs = old.nativeBuildInputs ++ [ icu.dev ];
   buildInputs = old.buildInputs ++ [ pkg-config ];
   postInstall = let

@@ -10,6 +10,7 @@
 in with info; rPackages.buildRPackage {
   propagatedBuildInputs = depends;
   nativeBuildInputs = depends;
+  preConfigure = "patchShebangs configure";
 
   inherit version;
   name = "${pname}-${version}";

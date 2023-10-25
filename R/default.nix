@@ -20,6 +20,7 @@ final: prev: {
       urltools = final.callPackage ./urltools {};
       triebeard = final.callPackage ./triebeard {};
       stringi = final.callPackage ./stringi {};
+      vctrs = final.callPackage ./vctrs {};
     };
   });
 }

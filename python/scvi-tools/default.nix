@@ -1,47 +1,69 @@
 { lib
 , buildPythonPackage
-, setuptools-scm
-, flit-core
 , hatchling
-, hatch-vcs
 , pythonOlder
-, pandas
+, anndata
+, chex
+, docrep
+, flax
+, jax
+, jaxlib
+, optax
 , numpy
+, pandas
 , scipy
+, scikit-learn
+, rich
 , h5py
-, natsort
-, packaging
-, exceptiongroup
-, array-api-compat
+, torch
+, lightning
+, torchmetrics
+, pyro-ppl
+, tqdm
+, numpyro
+, ml-collections
+, mudata
+, sparse
+, xarray
 , fetchSource
 , allReleases ? import ./releases.nix
 , release ? builtins.head allReleases
 , info ? (import ./info.nix) lib release
 }: 
 with info; buildPythonPackage {
-  format = if hatch
-    then "pyproject"
-    else "flit";
+  format = "pyproject";
   disabled = pythonOlder "3.8";
 
   SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
-  nativeBuildInputs = if hatch then [ 
-    hatchling hatch-vcs 
-  ] else [ 
-    setuptools-scm flit-core
+  nativeBuildInputs = [ 
+    hatchling
   ];
 
   propagatedBuildInputs = [
-    pandas
+    anndata
+    chex
+    docrep
+    flax
+    jax
+    jaxlib
+    optax
     numpy
+    pandas
     scipy
+    scikit-learn
+    rich
     h5py
-    natsort
-    packaging
-  ] ++ lib.optionals hatch [
-    array-api-compat
-    exceptiongroup
+    torch
+    lightning
+    torchmetrics
+    pyro-ppl
+    tqdm
+    numpyro
+    ml-collections
+    mudata
+    sparse
+    xarray
   ];
 
   inherit pname version;

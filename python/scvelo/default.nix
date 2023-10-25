@@ -1,47 +1,45 @@
 { lib
 , buildPythonPackage
-, setuptools-scm
-, flit-core
 , hatchling
-, hatch-vcs
 , pythonOlder
-, pandas
+, anndata
+, scanpy
+, loompy
+, umap-learn
+, numba
 , numpy
+, pandas
 , scipy
-, h5py
-, natsort
-, packaging
-, exceptiongroup
-, array-api-compat
+, scikit-learn
+, scvi-tools
+, matplotlib
 , fetchSource
 , allReleases ? import ./releases.nix
 , release ? builtins.head allReleases
 , info ? (import ./info.nix) lib release
 }: 
 with info; buildPythonPackage {
-  format = if hatch
-    then "pyproject"
-    else "flit";
+  format = "pyproject";
   disabled = pythonOlder "3.8";
 
   SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
-  nativeBuildInputs = if hatch then [ 
-    hatchling hatch-vcs 
-  ] else [ 
-    setuptools-scm flit-core
+  nativeBuildInputs = [ 
+    hatchling
   ];
 
   propagatedBuildInputs = [
-    pandas
+    anndata
+    scanpy
+    loompy
+    umap-learn
+    numba
     numpy
+    pandas
     scipy
-    h5py
-    natsort
-    packaging
-  ] ++ lib.optionals hatch [
-    array-api-compat
-    exceptiongroup
+    scikit-learn
+    scvi-tools
+    matplotlib
   ];
 
   inherit pname version;

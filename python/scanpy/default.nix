@@ -1,18 +1,29 @@
 { lib
 , buildPythonPackage
+, pythonOlder
 , setuptools-scm
 , flit-core
 , hatchling
 , hatch-vcs
-, pythonOlder
-, pandas
+, anndata
 , numpy
+, matplotlib
+, pandas
 , scipy
+, seaborn
 , h5py
+, tqdm
+, scikit-learn
+, statsmodels
+, patsy
+, networkx
 , natsort
+, joblib
+, numba
+, umap-learn
 , packaging
-, exceptiongroup
-, array-api-compat
+, session-info
+, get-annotations
 , fetchSource
 , allReleases ? import ./releases.nix
 , release ? builtins.head allReleases
@@ -33,15 +44,25 @@ with info; buildPythonPackage {
   ];
 
   propagatedBuildInputs = [
-    pandas
+    anndata
     numpy
+    matplotlib
+    pandas
     scipy
+    seaborn
     h5py
+    tqdm
+    scikit-learn
+    statsmodels
+    patsy
+    networkx
     natsort
+    joblib
+    numba
+    umap-learn
     packaging
-  ] ++ lib.optionals hatch [
-    array-api-compat
-    exceptiongroup
+    session-info
+    get-annotations
   ];
 
   inherit pname version;

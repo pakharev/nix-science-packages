@@ -21,11 +21,8 @@ lib: let
   meta = info: info // {
     meta = {
       description = "Array API compatibility library";
-      homepage = with info.devRepo; "https://${site}/${owner}/${repo}";
+      homepage = "https://github.com/data-apis/array-api-compat/";
       license = lib.licenses.mit;
-      maintainers = with lib.maintainers; [ ];
-    } // lib.optionalAttrs (info.type != "dev") {
-      changelog = with info.devRepo; "https://${site}/${owner}/${repo}/releases/tag/${info.version}";
     };
   };
 in info: lib.pipe info [

@@ -21,6 +21,7 @@ final: prev: {
       triebeard = final.callPackage ./triebeard {};
       stringi = final.callPackage ./stringi {};
       vctrs = final.callPackage ./vctrs {};
+      markdown = final.callPackage ./markdown {};
     };
   });
 }

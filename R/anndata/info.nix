@@ -18,7 +18,6 @@ lib: let
     meta = {
       description = "anndata for R";
       license = lib.licenses.mit;
-      maintainers = with lib.maintainers; [ ];
       homepage = "https://cran.r-project.org/web/packages/anndata/readme/README.html";
     };
   };

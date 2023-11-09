@@ -18,7 +18,6 @@ lib: let
     meta = {
       description = "";
       #license = ;
-      #maintainers = with lib.maintainers; [ ];
       homepage = "";
     };
   };

@@ -19,7 +19,6 @@ lib: let
     meta = {
       description = "Annotated data";
       license = lib.licenses.bsd3;
-      maintainers = with lib.maintainers; [ ];
       homepage = "https://anndata.readthedocs.io/";
     } // lib.optionalAttrs (info.type != "dev") {
       changelog = "https://anndata.readthedocs.io/en/latest/#latest-additions";

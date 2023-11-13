@@ -4,7 +4,6 @@
 , fetchurl
 , fetchpatch
 , fetchFromGitHub
-, callPackage
 , makeDesktopItem
 , copyDesktopItems
 , cmake
@@ -17,72 +16,64 @@
 , qtsensors
 , qtwebengine
 , qtwebchannel
+, quarto
 , libuuid
 , hunspellDicts
 , unzip
 , ant
 , jdk
 , gnumake
-, bash
-, makeWrapper
 , pandoc
 , llvmPackages
 , yaml-cpp
 , soci
 , postgresql
 , nodejs
-, yarn
-, fixup_yarn_lock
+, mkYarnModules
+, fetchYarnDeps
 , qmake
 , server ? false # build server version
 , sqlite
 , pam
 , nixosTests
-, patchShebangs
 }:
 
 let
   pname = "RStudio";
-  version = "2023.09-git";
+  version =
+  "${RSTUDIO_VERSION_MAJOR}.${RSTUDIO_VERSION_MINOR}.${RSTUDIO_VERSION_PATCH}${RSTUDIO_VERSION_SUFFIX}";
   RSTUDIO_VERSION_MAJOR  = "2023";
   RSTUDIO_VERSION_MINOR  = "09";
-  RSTUDIO_VERSION_PATCH  = "";
-  RSTUDIO_VERSION_SUFFIX = "";
-
-  RSTUDIO_RELEASE = "desert-sunflower";
-  rsconnect_version = "1.1.0";
+  RSTUDIO_VERSION_PATCH  = "0";
+  RSTUDIO_VERSION_SUFFIX = "+463";
 
   src = fetchFromGitHub {
     owner = "rstudio";
     repo = "rstudio";
-    rev = "02864b10b141bc6f53e5db5ce05300ea046314c9";
-    sha256 = "sha256-A0JRgTZIM91a4JY/BBfq2WopqVkoKPopd3yl1FL91nw=";
-    curlOpts = "--netrc-file /etc/nix/netrc";
-  };
-
-  # should be on the branch release/rstudio-${RSTUDIO_RELEASE}
-  quartoSrc = fetchFromGitHub {
-    owner = "quarto-dev";
-    repo = "quarto";
-    rev = "bc707df49fd6954d899b130def543fd711d206d5";
-    sha256 = "sha256-LI0SCOW+D2ewG8yxr5J3GJ4NaIykF50U+9681SC+EKw=";
-    curlOpts = "--netrc-file /etc/nix/netrc";
+    rev = "v${version}";
+    hash = "sha256-FwNuU2rbE3GEhuwphvZISUMhvSZJ6FjjaZ1oQ9F8NWc=";
   };
 
   mathJaxSrc = fetchurl {
     url = "https://s3.amazonaws.com/rstudio-buildtools/mathjax-27.zip";
-    sha256 = "sha256-xWy6psTOA8H8uusrXqPDEtL7diajYCVHcMvLiPsgQXY=";
+    hash = "sha256-xWy6psTOA8H8uusrXqPDEtL7diajYCVHcMvLiPsgQXY=";
   };
 
   rsconnectSrc = fetchFromGitHub {
     owner = "rstudio";
     repo = "rsconnect";
-    rev = "v${rsconnect_version}";
-    sha256 = "sha256-c1fFcN6KAfxXv8bv4WnIqQKg1wcNP2AywhEmIbyzaBA=";
-    curlOpts = "--netrc-file /etc/nix/netrc";
+    rev = "5175a927a41acfd9a21d9fdecb705ea3292109f2";
+    hash = "sha256-c1fFcN6KAfxXv8bv4WnIqQKg1wcNP2AywhEmIbyzaBA=";
   };
 
-  panmirrorCache = (callPackage ./yarndeps.nix {}).offline_cache;
+  # Ideally, rev should match the rstudio release name.
+  # e.g. release/rstudio-mountain-hydrangea
+  quartoSrc = fetchFromGitHub {
+    owner = "quarto-dev";
+    repo = "quarto";
+    rev = "bb264a572c6331d46abcf087748c021d815c55d7";
+    hash = "sha256-lZnZvioztbBWWa6H177X6rRrrgACx2gMjVFDgNup93g=";
+  };
 
   description = "Set of integrated tools for the R language";
 in
@@ -93,14 +84,10 @@ in
     nativeBuildInputs = [
       cmake
       unzip
-      bash
       ant
       jdk
-      makeWrapper
       pandoc
       nodejs
-      yarn
-      patchShebangs
     ] ++ lib.optionals (!server) [
       copyDesktopItems
     ];
@@ -114,6 +101,7 @@ in
       yaml-cpp
       soci
       postgresql
+      quarto
     ] ++ (if server then [
       sqlite.dev
       pam
@@ -127,11 +115,10 @@ in
 
     cmakeFlags = [
       "-DRSTUDIO_TARGET=${if server then "Server" else "Desktop"}"
-      "-DCMAKE_BUILD_TYPE=Release"
       "-DRSTUDIO_USE_SYSTEM_SOCI=ON"
       "-DRSTUDIO_USE_SYSTEM_BOOST=ON"
       "-DRSTUDIO_USE_SYSTEM_YAML_CPP=ON"
-      "-DQUARTO_ENABLED=FALSE"
+      "-DQUARTO_ENABLED=TRUE"
       "-DPANDOC_VERSION=${pandoc.version}"
       "-DCMAKE_INSTALL_PREFIX=${placeholder "out"}/lib/rstudio"
     ] ++ lib.optionals (!server) [
@@ -142,32 +129,36 @@ in
     patches = [
       ./r-location.patch
       ./clang-location.patch
-      ./soci-lib-location.patch
       ./use-system-node.patch
-      ./yarn-set-environment.patch
       ./fix-resources-path.patch
       ./pandoc-nix-path.patch
-      ./remove-quarto-from-generator.patch
-      ./do-not-install-pandoc.patch
+      ./use-system-quarto.patch
     ];
 
     postPatch = ''
       substituteInPlace src/cpp/core/r_util/REnvironmentPosix.cpp --replace '@R@' ${R}
 
       substituteInPlace src/cpp/CMakeLists.txt \
-        --replace '@soci@' ${soci}
+        --replace 'SOCI_LIBRARY_DIR "/usr/lib"' 'SOCI_LIBRARY_DIR "${soci}/lib"'
 
       substituteInPlace src/gwt/build.xml \
-        --replace '@yarn@' ${yarn}
+        --replace '@node@' ${nodejs} \
+        --replace './lib/quarto' ${quartoSrc}
+
+      substituteInPlace src/cpp/conf/rsession-dev.conf \
+        --replace '@node@' ${nodejs}
 
       substituteInPlace src/cpp/core/libclang/LibClang.cpp \
         --replace '@libclang@' ${llvmPackages.libclang.lib} \
         --replace '@libclang.so@' ${llvmPackages.libclang.lib}/lib/libclang.so
 
-      substituteInPlace src/cpp/session/include/session/SessionConstants.hpp \
-        --replace '@pandoc@' ${pandoc}/bin/pandoc
+      substituteInPlace src/cpp/session/CMakeLists.txt \
+        --replace '@pandoc@' ${pandoc} \
+        --replace '@quarto@' ${quarto}
 
-      sed '1i#include <set>' -i src/cpp/core/include/core/Thread.hpp
+      substituteInPlace src/cpp/session/include/session/SessionConstants.hpp \
+        --replace '@pandoc@' ${pandoc}/bin \
+        --replace '@quarto@' ${quarto}
     '';
 
     hunspellDictionaries = with lib; filter isDerivation (unique (attrValues hunspellDicts));
@@ -180,8 +171,7 @@ in
       hunspellDictionaries;
     dictionaries = largeDicts ++ otherDicts;
 
-    preConfigure =
-    ''
+    preConfigure = ''
       mkdir dependencies/dictionaries
       for dict in ${builtins.concatStringsSep " " dictionaries}; do
         for i in "$dict/share/hunspell/"*; do
@@ -195,14 +185,7 @@ in
       cp ${pandoc}/bin/pandoc dependencies/pandoc/${pandoc.version}/pandoc
 
       cp -r ${rsconnectSrc} dependencies/rsconnect
-      ( cd dependencies && ${R}/bin/R CMD build --no-build-vignettes rsconnect )
-
-      export QUARTO=$(readlink -f src/gwt/lib/quarto)
-      cp -r ${quartoSrc} $QUARTO
-      chmod -R u+w $QUARTO
-
-      ${fixup_yarn_lock}/bin/fixup_yarn_lock $QUARTO/yarn.lock
-      HOME=$QUARTO YARN_CACHE_FOLDER=$QUARTO/.yarn_cache yarn --offline config set yarn-offline-mirror ${panmirrorCache}
+      ( cd dependencies && ${R}/bin/R CMD build -d --no-build-vignettes rsconnect )
     '';
 
     postInstall = ''
@@ -226,14 +209,14 @@ in
       rm -r $out/lib/rstudio/{INSTALL,COPYING,NOTICE,README.md,SOURCE,VERSION}
     '';
 
-    meta = with lib; {
+    meta = {
       broken = (stdenv.isLinux && stdenv.isAarch64);
       inherit description;
       homepage = "https://www.rstudio.com/";
-      license = licenses.agpl3Only;
-      maintainers = with maintainers; [ ciil cfhammill ];
+      license = lib.licenses.agpl3Only;
+      maintainers = with lib.maintainers; [ ciil cfhammill ];
       mainProgram = "rstudio" + lib.optionalString server "-server";
-      platforms = platforms.linux;
+      platforms = lib.platforms.linux;
     };
 
     passthru = {

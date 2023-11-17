@@ -1,11 +1,21 @@
 final: prev: {
-  python = prev.python310.override {
+  lib = prev.lib.extend (self: super: {
+    configurablePackages = super.configurablePackages // {
+      style = {
+        # https://packaging.python.org/en/latest/specifications/version-specifiers/#developmental-releases
+        versionFromDev = devVersion: numDate: "${devVersion}.dev${numDate}";
+        gitRev = version: "refs/tags/${version}";
+      };
+    };
+  });
+  
+  python = final.python310.override {
     packageOverrides = (self: super: {
+      anndata = self.callPackage ./anndata {};
       array-api-compat = self.callPackage ./array-api-compat {};
       numpy-groupies = self.callPackage ./numpy-groupies {};
       get-annotations = self.callPackage ./get-annotations {};
       session-info = self.callPackage ./session-info {};
-      anndata = self.callPackage ./anndata {};
       mudata = self.callPackage ./mudata {};
       loompy = self.callPackage ./loompy {};
       scanpy = self.callPackage ./scanpy {};

@@ -11,7 +11,7 @@
       srcDev = {
         location = "dev";
         hash = "sha256-rW5Pql+1b012OFGlfY8V259d2ka1WvekXFQQRu0dvMA=";
-      }
+      };
     };
   }
 ]

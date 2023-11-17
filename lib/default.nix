@@ -55,12 +55,13 @@ final: prev: {
             new = conf: self.toFunction f conf // self.toFunction g conf;         
           in makeOverridableLocation new;
         };
-      in {
         generic = name: makeOverridableLocation (conf: {
           name = "${name}-${conf.pname}-${conf.version}-source";
         });
+      in {
+        inherit generic;
 
-        GitHub = (self.mirrors.generic "GitHub").override (conf: {
+        GitHub = (generic "GitHub").override (conf: {
           method = "fetchFromGitHub";
           repo = conf.pname;   
           rev = self.configurablePackages.style.gitRev conf.version;
@@ -71,7 +72,7 @@ final: prev: {
           inherit (conf) pname version;
         });
 
-        CRAN = (self.mirrors.generic "CRAN").override (conf: {
+        CRAN = (generic "CRAN").override (conf: {
           method = "fetchzip";
           urls = with conf; [
             "https://cran.r-project.org/src/contrib/${pname}_${version}.tar.gz"

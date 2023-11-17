@@ -40,4 +40,4 @@ in with final; buildPythonPackage {
 
   # requires too much
   doCheck = false;
-}
+}) (import ./releases.nix)

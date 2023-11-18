@@ -24,12 +24,32 @@
 , packaging
 , session-info
 , get-annotations
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}: 
-with info; buildPythonPackage {
+, fetchFromGitHub
+, fetchPypi
+}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
+  config = builtins.head configs;
+  defaults = lib.recursiveUpdate {
+    pname = "scanpy";
+    meta = {
+      description = "Single-Cell Analysis in Python";
+      license = lib.licenses.bsd3;
+      homepage = "https://scanpy.readthedocs.io/en/stable/";
+      inherit configs;
+    };
+    hatch = false;
+    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+  } (versionFromDev config);
+  locations = with commonLocations; {
+    inherit PyPI;
+    dev = GitHub.override {
+      owner = "scverse";
+    };
+  };
+  final = resolveFetchers {
+    inherit deps locations;
+  } defaults;
+in with final; buildPythonPackage {
+  inherit pname version src meta;
   format = if hatch
     then "pyproject"
     else "flit";
@@ -64,8 +84,4 @@ with info; buildPythonPackage {
     session-info
     get-annotations
   ];
-
-  inherit pname version;
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
 }

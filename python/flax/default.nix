@@ -15,12 +15,31 @@
 , tensorflow
 , tensorstore
 , rich
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}: 
-with info; buildPythonPackage {
+, fetchFromGitHub
+}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
+  config = builtins.head configs;
+  defaults = lib.recursiveUpdate {
+    pname = "flax";
+    meta = {
+      description = "Neural network library for JAX";
+      license = lib.licenses.asl20;
+      homepage = "https://github.com/google/flax";
+      inherit configs;
+    };
+    fetchers.src = "srcDev";
+  } (versionFromDev config);
+  locations = with commonLocations; {
+    dev = GitHub.override (conf: {
+      owner = "google";
+      rev = "refs/tags/v${conf.version}";
+    });
+  };
+  final = resolveFetchers {
+    inherit deps locations;
+  } defaults;
+in with final; buildPythonPackage {
+  inherit pname version src meta;
+
   format = "pyproject";
 
   nativeBuildInputs = [ 
@@ -93,8 +112,4 @@ with info; buildPythonPackage {
     "test_save_restore_checkpoints"
     "test_cloudpickle_module"
   ];
-
-  inherit pname version;
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
-}
+}) (import ./releases.nix)

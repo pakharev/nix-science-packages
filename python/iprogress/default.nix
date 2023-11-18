@@ -2,12 +2,27 @@
 , buildPythonPackage
 , setuptools-scm
 , six
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}:
-with info; buildPythonPackage {
+, fetchPypi
+}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
+  config = builtins.head configs;
+  defaults = lib.recursiveUpdate {
+    pname = "IProgress";
+    meta = {
+      description = "Text progress bar library for Python";
+      license = lib.licenses.mit;
+      homepage = "https://github.com/aebrahim/IProgress";
+      inherit configs;
+    };
+    fetchers.src = "srcPyPI";
+  } (versionFromDev config);
+  locations = with commonLocations; {
+    inherit PyPI;
+  };
+  final = resolveFetchers {
+    inherit deps locations;
+  } defaults;
+in with final; buildPythonPackage {
+  inherit pname version src meta;
   format = "setuptools";
 
   SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -19,8 +34,4 @@ with info; buildPythonPackage {
   propagatedBuildInputs = [
     six
   ];
-
-  inherit pname version;
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
 }

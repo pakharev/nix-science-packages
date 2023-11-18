@@ -2,12 +2,31 @@
 , buildPythonPackage
 , setuptools-scm
 , poetry-core
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}:
-with info; buildPythonPackage {
+, fetchFromGitHub
+, fetchPypi
+}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
+  config = builtins.head configs;
+  defaults = lib.recursiveUpdate {
+    pname = "get-annotations";
+    meta = {
+      description = "A backport of Python 3.10 get_annotations() function";
+      homepage = "https://github.com/shawwn/get-annotations";
+      license = lib.licenses.mit;
+      inherit configs;
+    };
+    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+  } (versionFromDev config);
+  locations = with commonLocations; {
+    inherit PyPI;
+    dev = GitHub.override {
+      owner = "shawwn";
+    };
+  };
+  final = resolveFetchers {
+    inherit deps locations;
+  } defaults;
+in with final; buildPythonPackage {
+  inherit pname version src meta;
   format = "pyproject";
 
   SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -15,8 +34,4 @@ with info; buildPythonPackage {
   nativeBuildInputs = [
     setuptools-scm poetry-core
   ];
-
-  inherit pname version;
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
 }

@@ -1,7 +1,5 @@
 { lib
 , buildPythonPackage
-, fetchFromGitHub
-, fetchPypi
 , setuptools-scm
 , flit-core
 , hatchling
@@ -15,6 +13,8 @@
 , packaging
 , exceptiongroup
 , array-api-compat
+, fetchFromGitHub
+, fetchPypi
 }@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
   config = builtins.head configs;
   defaults = lib.recursiveUpdate {

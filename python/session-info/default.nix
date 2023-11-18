@@ -2,12 +2,34 @@
 , buildPythonPackage
 , setuptools-scm
 , stdlib-list
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}:
-with info; buildPythonPackage {
+, fetchFromGitHub
+, fetchPypi
+}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
+  config = builtins.head configs;
+  defaults = lib.recursiveUpdate {
+    pname = "session_info";
+    meta = {
+      description = "Print version information for loaded modules in the current session, Python, and the OS";
+      homepage = "https://gitlab.com/joelostblom/session_info";
+      license = lib.licenses.bsd3;
+      inherit configs;
+    };
+    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+  } (versionFromDev config);
+  locations = with commonLocations; {
+    inherit PyPI;
+    dev = (generic "GitLab").override (conf: {
+      method = "fetchFromGitLab";
+      owner = "joelostblom";
+      repo = "session_info";
+      rev = "refs/tags/${conf.version}";
+    });
+  };
+  final = resolveFetchers {
+    inherit deps locations;
+  } defaults;
+in with final; buildPythonPackage {
+  inherit pname version src meta;
   format = "setuptools";
 
   SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -19,8 +41,4 @@ with info; buildPythonPackage {
   propagatedBuildInputs = [
     stdlib-list
   ];
-
-  inherit pname version;
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
 }

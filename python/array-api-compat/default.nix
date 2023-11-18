@@ -1,9 +1,9 @@
 { lib
 , buildPythonPackage
-, fetchFromGitHub
-, fetchPypi
 , setuptools-scm
 , pythonOlder
+, fetchFromGitHub
+, fetchPypi
 }@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
   config = builtins.head configs;
   defaults = lib.recursiveUpdate {

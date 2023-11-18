@@ -6,12 +6,32 @@
 , numpy
 , h5py
 , anndata
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}: 
-with info; buildPythonPackage {
+, fetchFromGitHub
+, fetchPypi
+}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
+  config = builtins.head configs;
+  defaults = lib.recursiveUpdate {
+    pname = "mudata";
+    meta = {
+      description = "Multimodal data";
+      license = lib.licenses.bsd3;
+      homepage = "https://mudata.readthedocs.io/";
+      inherit configs;
+    };
+    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+  } (versionFromDev config);
+  locations = with commonLocations; {
+    inherit PyPI;
+    dev = GitHub.override (conf: {
+      owner = "scverse";
+      rev = "refs/tags/v${conf.version}";
+    });
+  };
+  final = resolveFetchers {
+    inherit deps locations;
+  } defaults;
+in with final; buildPythonPackage {
+  inherit pname version src meta;
   format = "flit";
   disabled = pythonOlder "3.7";
 
@@ -27,8 +47,4 @@ with info; buildPythonPackage {
     h5py
     anndata
   ];
-
-  inherit pname version;
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
 }

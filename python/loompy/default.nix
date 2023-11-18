@@ -50,4 +50,4 @@ in with final; buildPythonPackage {
     click
     numpy-groupies
   ];
-}
+}) (import ./releases.nix)

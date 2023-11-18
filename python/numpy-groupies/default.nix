@@ -41,4 +41,4 @@ in with final; buildPythonPackage {
   propagatedBuildInputs = [
     numpy
   ];
-}
+}) (import ./releases.nix)

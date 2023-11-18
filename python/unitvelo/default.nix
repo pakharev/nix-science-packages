@@ -72,4 +72,4 @@ in with final; buildPythonPackage {
     jupyter
     tensorflow
   ];
-}
+}) (import ./releases.nix)

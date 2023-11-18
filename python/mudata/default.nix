@@ -47,4 +47,4 @@ in with final; buildPythonPackage {
     h5py
     anndata
   ];
-}
+}) (import ./releases.nix)

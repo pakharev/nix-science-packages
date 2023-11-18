@@ -89,4 +89,4 @@ in with final; buildPythonPackage {
     sparse
     xarray
   ];
-}
+}) (import ./releases.nix)

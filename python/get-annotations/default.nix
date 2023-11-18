@@ -34,4 +34,4 @@ in with final; buildPythonPackage {
   nativeBuildInputs = [
     setuptools-scm poetry-core
   ];
-}
+}) (import ./releases.nix)

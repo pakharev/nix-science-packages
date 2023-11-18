@@ -61,4 +61,4 @@ in with final; buildPythonPackage {
     scvi-tools
     matplotlib
   ];
-}
+}) (import ./releases.nix)

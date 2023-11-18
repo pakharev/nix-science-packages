@@ -41,4 +41,4 @@ in with final; buildPythonPackage {
   propagatedBuildInputs = [
     stdlib-list
   ];
-}
+}) (import ./releases.nix)

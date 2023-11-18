@@ -84,4 +84,4 @@ in with final; buildPythonPackage {
     session-info
     get-annotations
   ];
-}
+}) (import ./releases.nix)

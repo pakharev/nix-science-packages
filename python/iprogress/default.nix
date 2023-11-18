@@ -34,4 +34,4 @@ in with final; buildPythonPackage {
   propagatedBuildInputs = [
     six
   ];
-}
+}) (import ./releases.nix)

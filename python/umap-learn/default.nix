@@ -28,7 +28,7 @@
   format = "setuptools";
   disabled = pythonOlder "3.7";
 
-  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+  fetchers.src = if (conf.sources ? "srcDev") then "srcDev" else "srcPyPI";
 }) 
 
 devVersion.PEP440 

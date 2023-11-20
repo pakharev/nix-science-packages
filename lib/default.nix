@@ -1,40 +1,52 @@
 final: prev: {
   lib = prev.lib.extend (self: super: {
-    configurablePackages = let
+    packageConfigs = let
       makeOverridableConfigs = f: configs: f configs // {
         overrideConfigs = g: let
           new = self.toFunction g configs;
         in makeOverridableConfigs f new;
       };
-    in {
-      inherit makeOverridableConfigs;
+      buildChangeList = changes: {
+        __functor = self: change: buildChangeList (self.changes ++ [ change ]);
 
-      style = {
-        versionFromDev = devVersion: numDate: "${devVersion}.dev${numDate}";
-        gitRev = version: "refs/tags/v${version}";
+        inherit changes;
+
+        eval = f: makeOverridableConfigs (configs: let
+          upd = self.recursiveUpdate;
+          config = builtins.head configs;
+          res = upd (builtins.foldl' (acc: change: 
+            upd acc ((self.toFunction change) (upd acc config))
+          ) {} changes) config;
+        in f (upd res {
+          meta = { inherit configs; };
+        }));
+      };
+    in {
+      trivial = buildChangeList [];
+
+      devVersion = {
+        PEP440 = conf: let
+  	  version = if conf ? devVersion then
+            "${conf.devVersion}.dev${builtins.replaceStrings [ "-" ] [ "" ] conf.date}"
+ 	  else conf.version;
+        in {
+          inherit version;
+          SETUPTOOLS_SCM_PRETEND_VERSION = version;
+        };
       };
 
-      versionFromDev = conf: self.optionalAttrs (conf ? devVersion) { 
-        version = let
-          numDate = "${builtins.replaceStrings [ "-" ] [ "" ] conf.date}";
-          inherit (self.configurablePackages.style) versionFromDev;
-        in versionFromDev conf.devVersion numDate;
-      } // conf;
-
-      resolveFetchers = {
-        deps, locations
-      }: conf: with self.attrsets; let
+      resolveLocations = locations: conf: with self.attrsets; {
         sources = mapAttrs (_: s: optionalAttrs (s ? location) (
           locations.${s.location} conf
         )) conf.sources;
         fetchers = mapAttrs (n: _: n) (
           filterAttrs (_: v: (v ? automap) && v.automap) conf.sources
         );
-        resolvedConfig = recursiveUpdate {
-          inherit sources fetchers;
-        } conf;
+      };
+
+      populateFetchers = deps: conf: let
         sourceFod = v: let
-          recipe = resolvedConfig.sources.${v};
+          recipe = conf.sources.${v};
           args = builtins.removeAttrs recipe [
             "method" "automap" "location"
           ];
@@ -43,10 +55,8 @@ final: prev: {
           else
             recipe.method;
         in func args;
-	fods = mapAttrs (_: sourceFod) resolvedConfig.fetchers;
-      in recursiveUpdate (fods // resolvedConfig) {
-        meta = { inherit resolvedConfig; };
-      };
+      in self.mapAttrs (_: sourceFod) conf.fetchers //
+        builtins.removeAttrs conf [ "sources" "fetchers" ];
 
       commonLocations = let
         makeOverridableLocation = f: {
@@ -74,9 +84,11 @@ final: prev: {
 
         CRAN = (generic "CRAN").override (conf: {
           method = "fetchzip";
-          urls = with conf; [
-            "https://cran.r-project.org/src/contrib/${pname}_${version}.tar.gz"
-            "https://cran.r-project.org/src/contrib/Archive/${pname}/${pname}_${version}.tar.gz"
+          urls = let
+            base = "https://cran.r-project.org/src/contrib/";
+          in with conf; [
+            "${base}${pname}_${version}.tar.gz"
+            "${base}Archive/${pname}/${pname}_${version}.tar.gz"
           ];
         });
       };

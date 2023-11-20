@@ -28,7 +28,7 @@
 } 
 
 (conf: {
-  format = if conf ? hatch then "pyproject" else "flit";
+  format = "pyproject";
   disabled = pythonOlder "3.8";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";

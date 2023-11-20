@@ -1,7 +1,7 @@
 { lib
 , buildPythonPackage
-, setuptools-scm
 , pythonOlder
+, flit-core
 , pandas
 , numpy
 , h5py
@@ -20,7 +20,7 @@
 } 
 
 (conf: {
-  format = "flit";
+  format = "pyproject";
   disabled = pythonOlder "3.7";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
@@ -38,7 +38,7 @@ devVersion.PEP440
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   nativeBuildInputs = [ 
-    setuptools-scm 
+    flit-core
   ];
 
   propagatedBuildInputs = [

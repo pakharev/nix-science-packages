@@ -46,7 +46,7 @@
     platforms = lib.platforms.linux;
   };
   server = false;
-  mathJaxVersion = 27;
+  mathJaxVersion = "27";
 }
 
 (conf: {

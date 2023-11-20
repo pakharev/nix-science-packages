@@ -1,38 +1,34 @@
 { lib
 , rPackages
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}: let
-  depends = with rPackages; [ 
+, fetchFromGitHub
+, fetchzip
+}@deps: with lib.packageConfigs; (trivial
+
+{
+  pname = "triebeard";
+  meta = {
+    description = "";
+    homepage = "";
+    #license = lib.licenses.;
+  };
+}
+
+(conf: {
+  name = "${conf.pname}-${conf.version}";
+  fetchers.src = "srcCRAN";
+})
+
+devVersion.R
+
+(with commonLocations; resolveLocations {
+  inherit CRAN;
+})
+
+).eval (conf: let
+  rDepends = with rPackages; [ 
     Rcpp
   ];
-in with info; rPackages.buildRPackage {
-  propagatedBuildInputs = depends;
-  nativeBuildInputs = depends;
-
-  inherit version;
-  name = "${pname}-${version}";
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
-} 
-lib: let
-  defaults = info: {
-    pname = "triebeard";
-  } // info;
-  fetcher = with lib.mirrors; resolveFetcher {
-    inherit CRAN;
-  };
-  meta = info: info // {
-    meta = {
-      description = "";
-      #license = ;
-      homepage = "";
-    };
-  };
-in info: lib.pipe info [
-  defaults
-  fetcher
-  meta
-] 
+in rPackages.buildRPackage (populateFetchers deps conf // {
+  propagatedBuildInputs = rDepends;
+  nativeBuildInputs = rDepends;
+})) (import ./releases.nix)

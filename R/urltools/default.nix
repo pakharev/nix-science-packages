@@ -1,49 +1,39 @@
 { lib
 , rPackages
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}: let
-  depends = with rPackages; [ 
+, fetchFromGitHub
+, fetchzip
+}@deps: with lib.packageConfigs; (trivial
+
+{
+  pname = "urltools";
+  meta = {
+    description = "";
+    homepage = "";
+    #license = lib.licenses.;
+  };
+}
+
+(conf: {
+  name = "${conf.pname}-${conf.version}";
+  fetchers.src = if (config.sources ? "srcCRAN") then "srcCRAN" else "srcDev";
+})
+
+devVersion.R
+
+(with commonLocations; resolveLocations {
+  inherit CRAN;
+  dev = GitHub.override (conf: {
+    owner = "Ironholds";
+    rev = "refs/tags/${conf.version}";
+  });
+})
+
+).eval (conf: let
+  rDepends = with rPackages; [ 
     Rcpp
     triebeard
   ];
-in with info; rPackages.buildRPackage {
-  propagatedBuildInputs = depends;
-  nativeBuildInputs = depends;
-
-  inherit version;
-  name = "${pname}-${version}";
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
-} 
-lib: let
-  defaults = info: {
-    pname = "urltools";
-  } // info;
-  devVersion = info: info // lib.optionalAttrs (info.type == "dev") {
-    version = "${info.version}.0.${builtins.replaceStrings [ "-" ] [ "" ] info.date}";
-  };
-  fetcher = with lib.mirrors; resolveFetcher {
-    inherit CRAN;
-    dev = info: generic "github" info // {
-      method = "fetchFromGitHub";
-      owner = "Ironholds";
-      repo = "urltools";
-      rev = "${info.version}";
-    };
-  };
-  meta = info: info // {
-    meta = {
-      description = "";
-      #license = ;
-      homepage = "";
-    };
-  };
-in info: lib.pipe info [
-  defaults
-  devVersion
-  fetcher
-  meta
-] 
+in rPackages.buildRPackage (populateFetchers deps conf // {
+  propagatedBuildInputs = rDepends;
+  nativeBuildInputs = rDepends;
+})) (import ./releases.nix)

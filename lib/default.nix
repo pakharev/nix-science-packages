@@ -33,6 +33,14 @@ final: prev: {
           inherit version;
           SETUPTOOLS_SCM_PRETEND_VERSION = version;
         };
+
+        R = conf: let
+  	  version = if conf ? devVersion then
+            "${conf.devVersion}.0.${builtins.replaceStrings [ "-" ] [ "" ] conf.date}"
+ 	  else conf.version;
+        in {
+          inherit version;
+        };
       };
 
       resolveLocations = locations: conf: with self.attrsets; {

@@ -1,27 +1,27 @@
 final: prev: {
   rPackages = prev.rPackages.override (old: {
     overrides = old.overrides // {
-      reticulate = final.callPackage ./reticulate {};
       anndata = final.callPackage ./anndata {};
-      rappdirs = final.callPackage ./rappdirs {};
-      R6 = final.callPackage ./R6 {};
-      Matrix = final.callPackage ./Matrix {};
-      Rcpp = final.callPackage ./Rcpp {};
-      RcppTOML = final.callPackage ./RcppTOML {};
+      distances = final.callPackage ./distances {};
       here = final.callPackage ./here {};
       jsonlite = final.callPackage ./jsonlite {};
-      rlang = final.callPackage ./rlang {};
-      withr = final.callPackage ./withr {};
-      rprojroot = final.callPackage ./rprojroot {};
-      distances = final.callPackage ./distances {};
-      quadprog = final.callPackage ./quadprog {};
-      pagoda2 = final.callPackage ./pagoda2 {};
-      RcppProgress = final.callPackage ./RcppProgress {};
-      urltools = final.callPackage ./urltools {};
-      triebeard = final.callPackage ./triebeard {};
-      stringi = final.callPackage ./stringi {};
-      vctrs = final.callPackage ./vctrs {};
       markdown = final.callPackage ./markdown {};
+      Matrix = final.callPackage ./Matrix {};
+      pagoda2 = final.callPackage ./pagoda2 {};
+      quadprog = final.callPackage ./quadprog {};
+      R6 = final.callPackage ./R6 {};
+      rappdirs = final.callPackage ./rappdirs {};
+      Rcpp = final.callPackage ./Rcpp {};
+      RcppProgress = final.callPackage ./RcppProgress {};
+      RcppTOML = final.callPackage ./RcppTOML {};
+      reticulate = final.callPackage ./reticulate {};
+      rlang = final.callPackage ./rlang {};
+      rprojroot = final.callPackage ./rprojroot {};
+      stringi = final.callPackage ./stringi {};
+      triebeard = final.callPackage ./triebeard {};
+      urltools = final.callPackage ./urltools {};
+      vctrs = final.callPackage ./vctrs {};
+      withr = final.callPackage ./withr {};
     };
   });
 }

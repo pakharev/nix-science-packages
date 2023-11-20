@@ -1,46 +1,33 @@
 { lib
 , rPackages
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}: let
-  depends = with rPackages; [ 
-  ];
-in with info; rPackages.buildRPackage {
-  propagatedBuildInputs = depends;
-  nativeBuildInputs = depends;
+, fetchFromGitHub
+, fetchzip
+}@deps: with lib.packageConfigs; (trivial
 
-  inherit version;
-  name = "${pname}-${version}";
-  src = fetchSource fetcher;
-  meta = meta // { inherit allReleases release info; };
-} 
-lib: let
-  defaults = info: {
-    pname = "RcppProgress";
-  } // info;
-  devVersion = info: info // lib.optionalAttrs (info.type == "dev") {
-    version = "${info.version}.0.${builtins.replaceStrings [ "-" ] [ "" ] info.date}";
+{
+  pname = "RcppProgress";
+  meta = {
+    description = "";
+    homepage = "";
+    #license = lib.licenses.;
   };
-  fetcher = with lib.mirrors; resolveFetcher {
-    inherit CRAN;
-    dev = info: generic "github" info // {
-      method = "fetchFromGitHub";
-      owner = "kforner";
-      repo = "rcpp_progress";
-    };
-  };
-  meta = info: info // {
-    meta = {
-      description = "";
-      #license = ;
-      homepage = "";
-    };
-  };
-in info: lib.pipe info [
-  defaults
-  devVersion
-  fetcher
-  meta
-] 
+}
+
+(conf: {
+  name = "${conf.pname}-${conf.version}";
+  fetchers.src = "srcCRAN";
+})
+
+devVersion.R
+
+(with commonLocations; resolveLocations {
+  inherit CRAN;
+})
+
+).eval (conf: let
+  rDepends = with rPackages; [ 
+  ];
+in rPackages.buildRPackage (populateFetchers deps conf // {
+  propagatedBuildInputs = rDepends;
+  nativeBuildInputs = rDepends;
+})) (import ./releases.nix)

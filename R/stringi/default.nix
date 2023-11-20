@@ -4,11 +4,29 @@
 , icu
 , pkg-config
 , fetchzip
-, fetchSource
-, allReleases ? import ./releases.nix
-, release ? builtins.head allReleases
-, info ? (import ./info.nix) lib release
-}: 
+}@deps: with lib.packageConfigs; (trivial
+
+{
+  pname = "stringi";
+  meta = {
+    description = "";
+    homepage = "";
+    #license = lib.licenses.;
+  };
+}
+
+(conf: {
+  name = "${conf.pname}-${conf.version}";
+  fetchers.src = "srcCRAN";
+})
+
+devVersion.R
+
+(with commonLocations; resolveLocations {
+  inherit CRAN;
+})
+
+).eval (conf:
 (lib.makeOverridable ({
   name, version, src,
   depends ? [],
@@ -25,11 +43,10 @@
   meta.platforms = platforms;
   meta.broken = broken;
   meta.maintainers = maintainers;
-}) (with info; {
-  name = "${pname}-${version}";
-  inherit version;
-  src = fetchSource fetcher;
-})).overrideDerivation (old: {
+}) {
+  inherit (conf) name version;
+  inherit (populateFetchers deps conf) src;
+}).overrideDerivation (old: {
   nativeBuildInputs = old.nativeBuildInputs ++ [ icu.dev ];
   buildInputs = old.buildInputs ++ [ pkg-config ];
   postInstall = let
@@ -43,23 +60,4 @@
     ${old.postInstall or ""}
     cp ${icuSrc}/${icuName}.dat $out/library/stringi/libs
   '';
-})
-lib: let
-  defaults = info: {
-    pname = "stringi";
-  } // info;
-  fetcher = with lib.mirrors; resolveFetcher {
-    inherit CRAN;
-  };
-  meta = info: info // {
-    meta = {
-      description = "";
-      #license = ;
-      homepage = "";
-    };
-  };
-in info: lib.pipe info [
-  defaults
-  fetcher
-  meta
-] 
+})) (import ./releases.nix)

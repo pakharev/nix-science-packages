@@ -50,6 +50,10 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
+  
+  # No tests in archive
+  doCheck = false;
+
   nativeBuildInputs = [ 
     setuptools wheel
   ];

@@ -3,11 +3,14 @@ final: prev: {
     overrides = old.overrides // {
       anndata = final.callPackage ./anndata {};
       distances = final.callPackage ./distances {};
+      dplyr = final.callPackage ./dplyr {};
+      gratia = final.callPackage ./gratia {};
       here = final.callPackage ./here {};
       jsonlite = final.callPackage ./jsonlite {};
       markdown = final.callPackage ./markdown {};
       Matrix = final.callPackage ./Matrix {};
       pagoda2 = final.callPackage ./pagoda2 {};
+      pillar = final.callPackage ./pillar {};
       quadprog = final.callPackage ./quadprog {};
       R6 = final.callPackage ./R6 {};
       rappdirs = final.callPackage ./rappdirs {};
@@ -18,6 +21,7 @@ final: prev: {
       rlang = final.callPackage ./rlang {};
       rprojroot = final.callPackage ./rprojroot {};
       stringi = final.callPackage ./stringi {};
+      tibble = final.callPackage ./tibble {};
       triebeard = final.callPackage ./triebeard {};
       urltools = final.callPackage ./urltools {};
       vctrs = final.callPackage ./vctrs {};

@@ -6,11 +6,11 @@
     sources = {
       srcPyPI = {
         location = "PyPI";
-        hash = "";
+        hash = "sha256-xU1gc2RBPq3paLc7oHyLPqFEEoF/U80HtvcgrJVyk8Q=";
       };
       srcDev = {
         location = "dev";
-        hash = "";
+        hash = "sha256-bXAQjq7xBYn34tIZF96Sr5jDUii3s4FGkNx65rGKXkY=";
       };
     };
   }

@@ -39,7 +39,7 @@ devVersion.PEP440
     owner = "lmcinnes";
     repo = "umap";
     rev = let
-      prefix = lib.optionalString (conf.version < "0.5.5") "release-";
+      prefix = lib.optionalString (conf.version >= "0.5.5") "release-";
     in "refs/tags/${prefix}${conf.version}";
   });
 }) 

@@ -1,6 +1,7 @@
 { lib
 , buildPythonPackage
-, setuptools-scm
+, setuptools
+, wheel
 , pythonOlder
 , numpy
 , scikit-learn
@@ -50,7 +51,7 @@ devVersion.PEP440
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   nativeBuildInputs = [ 
-    setuptools-scm 
+    setuptools wheel
   ];
 
   propagatedBuildInputs = [

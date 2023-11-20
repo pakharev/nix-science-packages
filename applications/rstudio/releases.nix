@@ -33,14 +33,14 @@
   {
     RSTUDIO_VERSION_MAJOR  = "2023";
     RSTUDIO_VERSION_MINOR  = "03";
-    RSTUDIO_VERSION_PATCH  = "0";
-    RSTUDIO_VERSION_SUFFIX = "+386";
-    date = "2023-03-08";
+    RSTUDIO_VERSION_PATCH  = "2";
+    RSTUDIO_VERSION_SUFFIX = "+454";
+    date = "2023-06-01";
     sources = {
       src = {
         automap = true;      
         location = "dev";
-        hash = "sha256-4apZEkG91K+iR6rH5S1LKBN0DKpA7GTd38QlnuwhhqI=";
+        hash = "";
       };
       mathJaxSrc = {
         automap = true;

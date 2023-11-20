@@ -71,10 +71,12 @@
     url = "https://s3.amazonaws.com/rstudio-buildtools/mathjax-${conf.mathJaxVersion}.zip";
   });
   rsconnect = GitHub.override {
+    name = "GitHub-RStudio-build-rsconnect-source";
     owner = "rstudio";
     repo = "rsconnect";
   };
   quarto = GitHub.override {
+    name = "GitHub-RStudio-build-quarto-source";
     owner = "quarto-dev";
     repo = "quarto";
   };
@@ -229,7 +231,7 @@ in with total; (if server then stdenv.mkDerivation else mkDerivation) (total // 
       icon = "rstudio";
       desktopName = "RStudio";
       genericName = "IDE";
-      comment = description;
+      comment = meta.description;
       categories = [ "Development" ];
       mimeTypes = [
         "text/x-r-source" "text/x-r" "text/x-R" "text/x-r-doc" "text/x-r-sweave" "text/x-r-markdown"

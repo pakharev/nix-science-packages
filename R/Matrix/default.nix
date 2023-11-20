@@ -17,3 +17,22 @@ in with info; rPackages.buildRPackage {
   src = fetchSource fetcher;
   meta = meta // { inherit allReleases release info; };
 } 
+lib: let
+  defaults = info: {
+    pname = "Matrix";
+  } // info;
+  fetcher = with lib.mirrors; resolveFetcher {
+    inherit CRAN;
+  };
+  meta = info: info // {
+    meta = {
+      description = "";
+      #license = ;
+      homepage = "";
+    };
+  };
+in info: lib.pipe info [
+  defaults
+  fetcher
+  meta
+] 

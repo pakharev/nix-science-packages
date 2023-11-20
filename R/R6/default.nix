@@ -13,12 +13,12 @@
   };
 }
 
+devVersion.R
+
 (conf: {
   name = "${conf.pname}-${conf.version}";
   fetchers.src = if (conf.sources ? "srcCRAN") then "srcCRAN" else "srcDev";
 })
-
-devVersion.R
 
 (with commonLocations; resolveLocations {
   inherit CRAN;

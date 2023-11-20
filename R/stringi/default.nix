@@ -15,12 +15,12 @@
   };
 }
 
+devVersion.R
+
 (conf: {
   name = "${conf.pname}-${conf.version}";
   fetchers.src = "srcCRAN";
 })
-
-devVersion.R
 
 (with commonLocations; resolveLocations {
   inherit CRAN;

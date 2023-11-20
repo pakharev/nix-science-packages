@@ -17,10 +17,12 @@
 	hash = "sha256-xWy6psTOA8H8uusrXqPDEtL7diajYCVHcMvLiPsgQXY=";
       };
       rsconnectSrc = {
+        automap = true;
         rev = "5175a927a41acfd9a21d9fdecb705ea3292109f2";
         hash = "sha256-c1fFcN6KAfxXv8bv4WnIqQKg1wcNP2AywhEmIbyzaBA=";
       };
       quartoSrc = {
+        automap = true;
         rev = "bb264a572c6331d46abcf087748c021d815c55d7";
         hash = "sha256-lZnZvioztbBWWa6H177X6rRrrgACx2gMjVFDgNup93g=";
       };

@@ -16,35 +16,6 @@ final: prev: {
       flax = self.callPackage ./flax {};
 
       tensorflow = self.tensorflow-bin;
-      umap-learn = super.umap-learn.overrideAttrs (old: {
-        doCheck = false;
-        doInstallCheck = false;
-      });
-      jax = super.jax.overrideAttrs (old: {
-        doCheck = false; 
-        doInstallCheck = false;
-	propagatedBuildInputs = old.propagatedBuildInputs ++ [ self.jaxlib ];
-      });
-      torch = super.torch.overrideAttrs (old: {
-        doCheck = false; 
-        doInstallCheck = false;
-      });
-      pyflakes = super.pyflakes.overrideAttrs (old: {
-        doCheck = false; 
-        doInstallCheck = false;
-      });
-      natsort = super.natsort.overrideAttrs (old: {
-        doCheck = false; 
-        doInstallCheck = false;
-      });
-      boto = super.boto.overrideAttrs (old: {
-        doCheck = false; 
-        doInstallCheck = false;
-      });
-      pynndescent = super.pynndescent.overrideAttrs (old: {
-        doCheck = false; 
-        doInstallCheck = false;
-      });
     });
   };
 }

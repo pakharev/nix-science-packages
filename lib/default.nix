@@ -83,7 +83,6 @@ final: prev: {
         GitHub = (generic "GitHub").override (conf: {
           method = "fetchFromGitHub";
           repo = conf.pname;   
-          rev = self.configurablePackages.style.gitRev conf.version;
         });
 
         PyPI = makeOverridableLocation (conf: {

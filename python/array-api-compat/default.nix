@@ -4,40 +4,41 @@
 , pythonOlder
 , fetchFromGitHub
 , fetchPypi
-}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
-  config = builtins.head configs;
-  defaults = lib.recursiveUpdate {
-    pname = "array-api-compat";
-    meta = {
-      description = "Array API compatibility library";
-      homepage = "https://github.com/data-apis/array-api-compat/";
-      license = lib.licenses.mit;
-      inherit configs;
-    };
-    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
-  } (versionFromDev config);
-  locations = with commonLocations; {
-    PyPI = PyPI.override {
-      pname = "array_api_compat";
-    };
-    dev = GitHub.override {
-      owner = "data-apis";
-    };
+}@deps: with lib.packageConfigs; (trivial 
+
+{
+  pname = "array-api-compat";
+  meta = {
+    description = "Array API compatibility library";
+    homepage = "https://github.com/data-apis/array-api-compat/";
+    license = lib.licenses.mit;
   };
-  final = resolveFetchers {
-    inherit deps locations;
-  } defaults;
-in with final; buildPythonPackage {
-  inherit pname version src meta;
+} 
+
+(conf: {
   format = "setuptools";
   disabled = pythonOlder "3.7";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+}) 
 
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  PyPI = PyPI.override {
+    pname = "array_api_compat";
+  };
+  dev = GitHub.override (conf: {
+    owner = "data-apis";
+    rev = "refs/tags/${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   nativeBuildInputs = [
     setuptools-scm
   ];
 
   # requires too much
   doCheck = false;
-}) (import ./releases.nix)
+})) (import ./releases.nix)

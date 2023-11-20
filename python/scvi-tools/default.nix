@@ -27,39 +27,39 @@
 , xarray
 , fetchFromGitHub
 , fetchPypi
-}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
-  config = builtins.head configs;
-  defaults = lib.recursiveUpdate {
-    pname = "scvi-tools";
-    meta = {
-      description = "Probabilistic models for single-cell omics data";
-      license = lib.licenses.bsd3;
-      homepage = "https://scvi-tools.org/";
-      inherit configs;
-    };
-    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
-  } (versionFromDev config);
-  locations = with commonLocations; {
-    PyPI = PyPI.override {
-      pname = "scvi_tools";
-    };
-    dev = GitHub.override (conf: {
-      owner = "scverse";
-      rev = let
-        prefix = lib.optionalString (conf.version < "1.") "v";
-      in "refs/tags/${prefix}${conf.version}";
-    });
+}@deps: with lib.packageConfigs; (trivial 
+
+{
+  pname = "scvi-tools";
+  meta = {
+    description = "Probabilistic models for single-cell omics data";
+    homepage = "https://scvi-tools.org/";
+    license = lib.licenses.bsd3;
   };
-  final = resolveFetchers {
-    inherit deps locations;
-  } defaults;
-in with final; buildPythonPackage {
-  inherit pname version src meta;
+} 
+
+(conf: {
   format = "pyproject";
   disabled = pythonOlder "3.8";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+}) 
 
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  PyPI = PyPI.override {
+    pname = "scvi_tools";
+  };
+  dev = GitHub.override (conf: {
+    owner = "scverse";
+    rev = let
+      prefix = lib.optionalString (conf.version < "1.") "v";
+    in "refs/tags/${prefix}${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   nativeBuildInputs = [ 
     hatchling
   ];
@@ -89,4 +89,4 @@ in with final; buildPythonPackage {
     sparse
     xarray
   ];
-}) (import ./releases.nix)
+})) (import ./releases.nix)

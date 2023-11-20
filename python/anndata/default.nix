@@ -15,38 +15,37 @@
 , array-api-compat
 , fetchFromGitHub
 , fetchPypi
-}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
-  config = builtins.head configs;
-  defaults = lib.recursiveUpdate {
-    pname = "anndata";
-    meta = {
-      description = "Annotated data";
-      license = lib.licenses.bsd3;
-      homepage = "https://anndata.readthedocs.io/";
-      changelog = "https://anndata.readthedocs.io/en/latest/#latest-additions";
-      inherit configs;
-    };
-    hatch = false;
-    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
-  } (versionFromDev config);
-  locations = with commonLocations; {
-    inherit PyPI;
-    dev = GitHub.override {
-      owner = "scverse";
-    };
-  };
-  final = resolveFetchers {
-    inherit deps locations;
-  } defaults;
-in with final; buildPythonPackage {
-  inherit pname version src meta;
+}@deps: with lib.packageConfigs; (trivial 
 
-  format = if hatch then "pyproject" else "flit";
+{
+  pname = "anndata";
+  meta = {
+    description = "Annotated data";
+    homepage = "https://anndata.readthedocs.io/";
+    changelog = "https://anndata.readthedocs.io/en/latest/#latest-additions";
+    license = lib.licenses.bsd3;
+  };
+} 
+
+(conf: {
+  format = if conf ? hatch then "pyproject" else "flit";
   disabled = pythonOlder "3.8";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+}) 
 
-  nativeBuildInputs = if hatch then [ 
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  inherit PyPI;
+  dev = GitHub.override (conf: {
+    owner = "scverse";
+    rev = "refs/tags/${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
+  nativeBuildInputs = if conf ? hatch then [ 
     hatchling hatch-vcs 
   ] else [ 
     setuptools-scm flit-core
@@ -59,8 +58,8 @@ in with final; buildPythonPackage {
     h5py
     natsort
     packaging
-  ] ++ lib.optionals hatch [
+  ] ++ lib.optionals (conf ? hatch) [
     array-api-compat
     exceptiongroup
   ];
-}) (import ./releases.nix)
+})) (import ./releases.nix)

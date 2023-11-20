@@ -16,32 +16,33 @@
 , tensorstore
 , rich
 , fetchFromGitHub
-}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
-  config = builtins.head configs;
-  defaults = lib.recursiveUpdate {
-    pname = "flax";
-    meta = {
-      description = "Neural network library for JAX";
-      license = lib.licenses.asl20;
-      homepage = "https://github.com/google/flax";
-      inherit configs;
-    };
-    fetchers.src = "srcDev";
-  } (versionFromDev config);
-  locations = with commonLocations; {
-    dev = GitHub.override (conf: {
-      owner = "google";
-      rev = "refs/tags/v${conf.version}";
-    });
+}@deps: with lib.packageConfigs; (trivial 
+
+{
+  pname = "flax";
+  meta = {
+    description = "Neural network library for JAX";
+    homepage = "https://github.com/google/flax";
+    license = lib.licenses.asl20;
   };
-  final = resolveFetchers {
-    inherit deps locations;
-  } defaults;
-in with final; buildPythonPackage {
-  inherit pname version src meta;
+} 
 
+(conf: {
   format = "pyproject";
+  fetchers.src = "srcDev";
+}) 
 
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  inherit PyPI;
+  dev = GitHub.override (conf: {
+    owner = "google";
+    rev = "refs/tags/v${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   nativeBuildInputs = [ 
     setuptools-scm
     jaxlib pythonRelaxDepsHook 
@@ -112,4 +113,4 @@ in with final; buildPythonPackage {
     "test_save_restore_checkpoints"
     "test_cloudpickle_module"
   ];
-}) (import ./releases.nix)
+})) (import ./releases.nix)

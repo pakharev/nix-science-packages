@@ -8,35 +8,35 @@
 , anndata
 , fetchFromGitHub
 , fetchPypi
-}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
-  config = builtins.head configs;
-  defaults = lib.recursiveUpdate {
-    pname = "mudata";
-    meta = {
-      description = "Multimodal data";
-      license = lib.licenses.bsd3;
-      homepage = "https://mudata.readthedocs.io/";
-      inherit configs;
-    };
-    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
-  } (versionFromDev config);
-  locations = with commonLocations; {
-    inherit PyPI;
-    dev = GitHub.override (conf: {
-      owner = "scverse";
-      rev = "refs/tags/v${conf.version}";
-    });
+}@deps: with lib.packageConfigs; (trivial 
+
+{
+  pname = "mudata";
+  meta = {
+    description = "Multimodal data";
+    license = lib.licenses.bsd3;
+    homepage = "https://mudata.readthedocs.io/";
   };
-  final = resolveFetchers {
-    inherit deps locations;
-  } defaults;
-in with final; buildPythonPackage {
-  inherit pname version src meta;
+} 
+
+(conf: {
   format = "flit";
   disabled = pythonOlder "3.7";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+}) 
 
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  inherit PyPI;
+  dev = GitHub.override (conf: {
+    owner = "scverse";
+    rev = "refs/tags/v${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   nativeBuildInputs = [ 
     setuptools-scm 
   ];
@@ -47,4 +47,4 @@ in with final; buildPythonPackage {
     h5py
     anndata
   ];
-}) (import ./releases.nix)
+})) (import ./releases.nix)

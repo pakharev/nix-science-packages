@@ -15,35 +15,35 @@
 , matplotlib
 , fetchFromGitHub
 , fetchPypi
-}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
-  config = builtins.head configs;
-  defaults = lib.recursiveUpdate {
-    pname = "scvelo";
-    meta = {
-      description = "RNA velocity generalized through dynamical modeling";
-      license = lib.licenses.bsd3;
-      homepage = "https://scvelo.readthedocs.io/en/stable/";
-      inherit configs;
-    };
-    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
-  } (versionFromDev config);
-  locations = with commonLocations; {
-    inherit PyPI;
-    dev = GitHub.override (conf: {
-      owner = "theislab";
-      rev = "refs/tags/v${conf.version}";
-    });
+}@deps: with lib.packageConfigs; (trivial 
+
+{
+  pname = "scvelo";
+  meta = {
+    description = "RNA velocity generalized through dynamical modeling";
+    homepage = "https://scvelo.readthedocs.io/en/stable/";
+    license = lib.licenses.bsd3;
   };
-  final = resolveFetchers {
-    inherit deps locations;
-  } defaults;
-in with final; buildPythonPackage {
-  inherit pname version src meta;
+} 
+
+(conf: {
   format = "pyproject";
   disabled = pythonOlder "3.8";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+}) 
 
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  inherit PyPI;
+  dev = GitHub.override (conf: {
+    owner = "theislab";
+    rev = "refs/tags/v${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   nativeBuildInputs = [ 
     hatchling
   ];
@@ -61,4 +61,4 @@ in with final; buildPythonPackage {
     scvi-tools
     matplotlib
   ];
-}) (import ./releases.nix)
+})) (import ./releases.nix)

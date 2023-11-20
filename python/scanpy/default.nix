@@ -26,38 +26,36 @@
 , get-annotations
 , fetchFromGitHub
 , fetchPypi
-}@deps: with lib.configurablePackages; makeOverridableConfigs (configs: let
-  config = builtins.head configs;
-  defaults = lib.recursiveUpdate {
-    pname = "scanpy";
-    meta = {
-      description = "Single-Cell Analysis in Python";
-      license = lib.licenses.bsd3;
-      homepage = "https://scanpy.readthedocs.io/en/stable/";
-      inherit configs;
-    };
-    hatch = false;
-    fetchers.src = if (config.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
-  } (versionFromDev config);
-  locations = with commonLocations; {
-    inherit PyPI;
-    dev = GitHub.override {
-      owner = "scverse";
-    };
+}@deps: with lib.packageConfigs; (trivial 
+
+{
+  pname = "scanpy";
+  meta = {
+    description = "Single-Cell Analysis in Python";
+    homepage = "https://scanpy.readthedocs.io/";
+    license = lib.licenses.bsd3;
   };
-  final = resolveFetchers {
-    inherit deps locations;
-  } defaults;
-in with final; buildPythonPackage {
-  inherit pname version src meta;
-  format = if hatch
-    then "pyproject"
-    else "flit";
+} 
+
+(conf: {
+  format = if conf ? hatch then "pyproject" else "flit";
   disabled = pythonOlder "3.8";
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+}) 
 
-  nativeBuildInputs = if hatch then [ 
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  inherit PyPI;
+  dev = GitHub.override (conf: {
+    owner = "scverse";
+    rev = "refs/tags/${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
+  nativeBuildInputs = if conf ? hatch then [ 
     hatchling hatch-vcs 
   ] else [ 
     setuptools-scm flit-core
@@ -84,4 +82,4 @@ in with final; buildPythonPackage {
     session-info
     get-annotations
   ];
-}) (import ./releases.nix)
+})) (import ./releases.nix)

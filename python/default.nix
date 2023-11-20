@@ -1,14 +1,4 @@
 final: prev: {
-  lib = prev.lib.extend (self: super: {
-    configurablePackages = super.configurablePackages // {
-      style = {
-        # https://packaging.python.org/en/latest/specifications/version-specifiers/#developmental-releases
-        versionFromDev = devVersion: numDate: "${devVersion}.dev${numDate}";
-        gitRev = version: "refs/tags/${version}";
-      };
-    };
-  });
-  
   python = final.python310.override {
     packageOverrides = (self: super: {
       anndata = self.callPackage ./anndata {};

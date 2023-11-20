@@ -40,7 +40,7 @@
       src = {
         automap = true;      
         location = "dev";
-        hash = "";
+        hash = "sha256-MShZIdOCTGBBr8d2PKqhUdSXCObLXK04eePstwLO8oo=";
       };
       mathJaxSrc = {
         automap = true;

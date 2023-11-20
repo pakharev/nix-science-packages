@@ -163,17 +163,18 @@ in with total; (if server then stdenv.mkDerivation else mkDerivation) (total // 
       --replace '@quarto@' ${quarto}
   '';
 
-  hunspellDictionaries = with lib; filter isDerivation (unique (attrValues hunspellDicts));
-  # These dicts contain identically-named dict files, so we only keep the
-  # -large versions in case of clashes
-  largeDicts = with lib; filter (d: hasInfix "-large-wordlist" d.name) hunspellDictionaries;
-  otherDicts = with lib; filter
-    (d: !(hasAttr "dictFileName" d &&
-      elem d.dictFileName (map (d: d.dictFileName) largeDicts)))
-    hunspellDictionaries;
-  dictionaries = largeDicts ++ otherDicts;
 
-  preConfigure = ''
+  preConfigure = let
+    hunspellDictionaries = with lib; filter isDerivation (unique (attrValues hunspellDicts));
+    # These dicts contain identically-named dict files, so we only keep the
+    # -large versions in case of clashes
+    largeDicts = with lib; filter (d: hasInfix "-large-wordlist" d.name) hunspellDictionaries;
+    otherDicts = with lib; filter
+      (d: !(hasAttr "dictFileName" d &&
+        elem d.dictFileName (map (d: d.dictFileName) largeDicts)))
+      hunspellDictionaries;
+    dictionaries = largeDicts ++ otherDicts;
+  in ''
     mkdir dependencies/dictionaries
     for dict in ${builtins.concatStringsSep " " dictionaries}; do
       for i in "$dict/share/hunspell/"*; do

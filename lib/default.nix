@@ -78,6 +78,7 @@ final: prev: {
         });
       in {
         inherit generic;
+        empty = makeOverridableLocation (conf: {});
 
         GitHub = (generic "GitHub").override (conf: {
           method = "fetchFromGitHub";

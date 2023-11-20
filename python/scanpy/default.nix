@@ -24,7 +24,6 @@
 , packaging
 , session-info
 , get-annotations
-, tbb
 , fetchFromGitHub
 , fetchPypi
 }@deps: with lib.packageConfigs; (trivial 
@@ -82,6 +81,5 @@ devVersion.PEP440
     packaging
     session-info
     get-annotations
-    tbb
   ];
 })) (import ./releases.nix)

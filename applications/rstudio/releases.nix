@@ -30,35 +30,4 @@
       };
     };
   }
-  {
-    RSTUDIO_VERSION_MAJOR  = "2023";
-    RSTUDIO_VERSION_MINOR  = "03";
-    RSTUDIO_VERSION_PATCH  = "2";
-    RSTUDIO_VERSION_SUFFIX = "+454";
-    date = "2023-06-01";
-    sources = {
-      src = {
-        automap = true;      
-        location = "dev";
-        hash = "sha256-MShZIdOCTGBBr8d2PKqhUdSXCObLXK04eePstwLO8oo=";
-      };
-      mathJaxSrc = {
-        automap = true;
-        location = "awsMathJax";
-        hash = "sha256-xWy6psTOA8H8uusrXqPDEtL7diajYCVHcMvLiPsgQXY=";
-      };
-      rsconnectSrc = {
-        automap = true;
-        location = "rsconnect";
-        rev = "5175a927a41acfd9a21d9fdecb705ea3292109f2";
-        hash = "sha256-c1fFcN6KAfxXv8bv4WnIqQKg1wcNP2AywhEmIbyzaBA=";
-      };
-     quartoSrc = {
-        automap = true;
-        location = "quarto";
-        rev = "aea3027882718af657d60221818c3ff35f413219";
-        hash = "sha256-GZLRfoKZ+TK1l2ng5HQjVhMS+PxR9CB6vsWcMoWddW8=";
-      };
-    };
-  }
 ]

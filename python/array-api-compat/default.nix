@@ -39,6 +39,4 @@ devVersion.PEP440
     setuptools-scm
   ];
 
-  # requires too much
-  doCheck = false;
 })) (import ./releases.nix)

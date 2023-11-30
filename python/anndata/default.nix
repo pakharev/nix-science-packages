@@ -13,6 +13,7 @@
 , packaging
 , exceptiongroup
 , array-api-compat
+, cupy
 , fetchFromGitHub
 , fetchPypi
 }@deps: with lib.packageConfigs; (trivial 
@@ -61,5 +62,9 @@ devVersion.PEP440
   ] ++ lib.optionals (conf ? hatch) [
     array-api-compat
     exceptiongroup
+  ];
+
+  passthru.optional-dependencies.gpu = [
+    cupy
   ];
 })) (import ./releases.nix)

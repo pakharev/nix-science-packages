@@ -1,5 +1,21 @@
 [
   {
+    date = "2023-10-31";
+    version = "0.10.3";
+    type = "minor";
+    hatch = true;
+    sources = {
+      srcPyPI = {
+        location = "PyPI";
+        hash = "sha256-OkDrajDpdqPyZ4oJ6JzYgZuxmzlEJ4uU6y1WgGDTA0Q=";
+      };
+      srcDev = {
+        location = "dev";
+        hash = "sha256-wRNpKJm/+7upAb1mCMfcU9XtkNyXFF0j0rMuElP57J8=";
+      };
+    };
+  }
+  {
     date = "2023-10-06";
     version = "0.10.0";
     type = "major";

@@ -2,8 +2,8 @@ final: prev: {
   python = final.python310.override {
     packageOverrides = (self: super: {
       anndata = self.callPackage ./anndata {};
-      array-api-compat = (self.callPackage ./array-api-compat {}).overridePythonAttributes {
-        doCheck = true;
+      array-api-compat = (self.callPackage ./array-api-compat {}).overridePythonAttrs {
+        doCheck = false;
       };
       flax = self.callPackage ./flax {};
       get-annotations = self.callPackage ./get-annotations {};

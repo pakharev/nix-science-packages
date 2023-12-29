@@ -15,11 +15,14 @@ final: prev: {
       R6 = final.callPackage ./R6 {};
       rappdirs = final.callPackage ./rappdirs {};
       Rcpp = final.callPackage ./Rcpp {};
+      RcppML = final.callPackage ./RcppML {};
       RcppProgress = final.callPackage ./RcppProgress {};
       RcppTOML = final.callPackage ./RcppTOML {};
       reticulate = final.callPackage ./reticulate {};
       rlang = final.callPackage ./rlang {};
       rprojroot = final.callPackage ./rprojroot {};
+      sceasy = final.callPackage ./sceasy {};
+      singlet = final.callPackage ./singlet {};
       stringi = final.callPackage ./stringi {};
       tibble = final.callPackage ./tibble {};
       triebeard = final.callPackage ./triebeard {};

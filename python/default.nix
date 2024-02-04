@@ -5,6 +5,9 @@ final: prev: {
       array-api-compat = (self.callPackage ./array-api-compat {}).overridePythonAttrs {
         doCheck = false;
       };
+      black = super.black.overridePythonAttrs {
+        doCheck = false;
+      };
       debugpy = super.debugpy.overridePythonAttrs {
         doCheck = false;
       };

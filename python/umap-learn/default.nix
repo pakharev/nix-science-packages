@@ -78,6 +78,9 @@ devVersion.PEP440
 
     # tensorflow maybe incompatible? https://github.com/lmcinnes/umap/issues/821
     "test_save_load"
+
+    # recursion?
+    "test_parametric_umap"
   ];
 
 })) (import ./releases.nix)

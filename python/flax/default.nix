@@ -12,6 +12,7 @@
 , pytest-xdist
 , pytestCheckHook
 , pythonRelaxDepsHook
+, pyyaml
 , tensorflow
 , tensorstore
 , rich
@@ -57,6 +58,8 @@ devVersion.PEP440
     optax
     rich
     tensorstore
+  ] ++ lib.optionals (conf.version >= "0.8.0") [
+    pyyaml
   ];
 
   # See https://github.com/google/flax/pull/2882.

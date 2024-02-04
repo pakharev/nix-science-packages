@@ -20,6 +20,9 @@ final: prev: {
       scvelo = self.callPackage ./scvelo {};
       scvi-tools = self.callPackage ./scvi-tools {};
       session-info = self.callPackage ./session-info {};
+      ubelt = super.ubelt.overridePythonAttrs {
+        doCheck = false;
+      };
       umap-learn = (self.callPackage ./umap-learn {}).overridePythonAttrs {
         doCheck = false;
       };

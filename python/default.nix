@@ -19,6 +19,7 @@ final: prev: {
       loompy = self.callPackage ./loompy {};
       mudata = self.callPackage ./mudata {};
       numpy-groupies = self.callPackage ./numpy-groupies {};
+      pynndescent = self.callPackage ./pynndescent {};
       scanpy = self.callPackage ./scanpy {};
       scvelo = self.callPackage ./scvelo {};
       scvi-tools = self.callPackage ./scvi-tools {};
@@ -29,7 +30,6 @@ final: prev: {
       umap-learn = (self.callPackage ./umap-learn {}).overridePythonAttrs {
         doCheck = false;
       };
-      pynndescent = self.callPackage ./pynndescent {};
       unitvelo = self.callPackage ./unitvelo {};
 
       tensorflow = self.tensorflow-bin;

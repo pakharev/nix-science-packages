@@ -16,6 +16,7 @@ final: prev: {
       };
       get-annotations = self.callPackage ./get-annotations {};
       iprogress = self.callPackage ./iprogress {};
+      kaleido = self.callPackage ./kaleido {};
       loompy = self.callPackage ./loompy {};
       mudata = self.callPackage ./mudata {};
       numpy-groupies = self.callPackage ./numpy-groupies {};
@@ -24,6 +25,7 @@ final: prev: {
       scvelo = self.callPackage ./scvelo {};
       scvi-tools = self.callPackage ./scvi-tools {};
       session-info = self.callPackage ./session-info {};
+      tensorflow = self.tensorflow-bin;
       ubelt = super.ubelt.overridePythonAttrs {
         doCheck = false;
       };
@@ -31,8 +33,6 @@ final: prev: {
         doCheck = false;
       };
       unitvelo = self.callPackage ./unitvelo {};
-
-      tensorflow = self.tensorflow-bin;
     });
   };
 }

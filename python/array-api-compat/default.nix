@@ -16,7 +16,7 @@
 } 
 
 (conf: {
-  format = "setuptools";
+  pyproject = true;
   disabled = pythonOlder "3.7";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
@@ -35,7 +35,7 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  nativeBuildInputs = [
+  build-system = [
     setuptools-scm
   ];
 

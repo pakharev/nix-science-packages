@@ -1,44 +1,55 @@
 { lib
 , buildPythonPackage
 , setuptools-scm
-, pythonOlder
+, absl-py
+, cloudpickle
+, dm-tree
+, jax
+, jaxlib
 , numpy
+, pytest
+, toolz
+, typing-extensions
 , fetchFromGitHub
-, fetchPypi
 }@deps: with lib.packageConfigs; (trivial 
 
 {
-  pname = "numpy-groupies";
+  pname = "chex";
   meta = {
-    description = "Optimised tools for group-indexing operations: aggregated sum and more";
-    homepage = "https://github.com/ml31415/numpy-groupies";
-    license = lib.licenses.bsd2;
+    description = "Chex is a library of utilities for helping to write reliable JAX code.";
+    homepage = "https://github.com/deepmind/chex/";
+    license = lib.licenses.asl20;
   };
 } 
 
 (conf: {
   pyproject = true;
-  disabled = pythonOlder "3.8";
-
-  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+  fetchers.src = "srcDev";
 }) 
 
 devVersion.PEP440 
 
 (with commonLocations; resolveLocations {
-  inherit PyPI;
   dev = GitHub.override (conf: {
-    owner = "ml31415";
+    owner = "google-deepmind";
     rev = "refs/tags/v${conf.version}";
   });
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  build-system = [
+  build-system = [ 
     setuptools-scm
   ];
 
   dependencies = [
+    absl-py
+    jaxlib
+    jax
     numpy
+    toolz
+    typing-extensions
   ];
+
+  doCheck = false;
+
 })) (import ./releases.nix)

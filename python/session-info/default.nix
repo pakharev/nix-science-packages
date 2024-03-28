@@ -16,7 +16,7 @@
 } 
 
 (conf: {
-  format = "setuptools";
+  pyproject = true;
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
 }) 
 
@@ -33,11 +33,11 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  nativeBuildInputs = [
+  build-system = [
     setuptools-scm
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     stdlib-list
   ];
 })) (import ./releases.nix)

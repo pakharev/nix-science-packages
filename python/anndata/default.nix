@@ -29,7 +29,7 @@
 } 
 
 (conf: {
-  format = "pyproject";
+  pyproject = true;
   disabled = pythonOlder "3.8";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
@@ -46,13 +46,13 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  nativeBuildInputs = if conf ? hatch then [ 
+  build-system = if conf ? hatch then [ 
     hatchling hatch-vcs 
   ] else [ 
     setuptools-scm flit-core
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     pandas
     numpy
     scipy
@@ -62,9 +62,5 @@ devVersion.PEP440
   ] ++ lib.optionals (conf ? hatch) [
     array-api-compat
     exceptiongroup
-  ];
-
-  passthru.optional-dependencies.gpu = [
-    cupy
   ];
 })) (import ./releases.nix)

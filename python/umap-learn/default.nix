@@ -1,18 +1,20 @@
 { lib
 , buildPythonPackage
-, fetchFromGitHub
-, fetchPypi
-, keras
+, setuptools-scm
 , numba
 , numpy
 , pynndescent
-, pytestCheckHook
+, pytest
 , pythonOlder
 , scikit-learn
 , scipy
+, keras
 , tensorflow
+, tensorflow-probability
 , tqdm
 , tbb
+, fetchFromGitHub
+, fetchPypi
 }@deps: with lib.packageConfigs; (trivial 
 
 {
@@ -45,8 +47,11 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
+  build-system = [
+    setuptools-scm
+  ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     numba
     numpy
     pynndescent
@@ -54,12 +59,13 @@ devVersion.PEP440
     scipy
     tqdm
     tbb
+    keras
+    tensorflow
+    tensorflow-probability
   ];
 
   nativeCheckInputs = [
-    keras
-    pytestCheckHook
-    tensorflow
+    pytest
   ];
 
   preCheck = ''
@@ -78,9 +84,6 @@ devVersion.PEP440
 
     # tensorflow maybe incompatible? https://github.com/lmcinnes/umap/issues/821
     "test_save_load"
-
-    # recursion?
-    "test_parametric_umap"
   ];
 
 })) (import ./releases.nix)

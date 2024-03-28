@@ -1,6 +1,7 @@
 { lib
 , buildPythonPackage
 , hatchling
+, setuptools-scm
 , pythonOlder
 , anndata
 , scanpy
@@ -27,7 +28,7 @@
 } 
 
 (conf: {
-  format = "pyproject";
+  pyproject = true;
   disabled = pythonOlder "3.8";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
@@ -44,11 +45,12 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  nativeBuildInputs = [ 
+  build-system = [ 
     hatchling
+    setuptools-scm
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     anndata
     scanpy
     loompy

@@ -1,38 +1,50 @@
 { lib
 , buildPythonPackage
-, fetchPypi
-, fetchpatch
+, setuptools-scm
 , importlib-metadata
 , joblib
 , llvmlite
 , numba
 , scikit-learn
 , scipy
-, pytestCheckHook
+, pytest
 , pythonOlder
-}:
+, fetchPypi
+, fetchFromGitHub
+}@deps: with lib.packageConfigs; (trivial 
 
-buildPythonPackage rec {
+{
   pname = "pynndescent";
-  version = "0.5.10";
-  format = "setuptools";
+  meta = {
+    description = "Python nearest neighbor descent for approximate nearest neighbors";
+    license = lib.licenses.bsd2;
+    homepage = "https://pynndescent.readthedocs.io";
+  };
+} 
 
+(conf: {
+  pyproject = true;
   disabled = pythonOlder "3.6";
 
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-XV3Gg8A+9V/j3faThZcgyhj4XG5uW7C08UhwJ41SiK0=";
-  };
+  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+}) 
 
-  patches = [
-    # https://github.com/lmcinnes/pynndescent/pull/224
-    (fetchpatch {
-      url = "https://github.com/lmcinnes/pynndescent/commit/86e0d716a3a4d5f4e6a0a3c2952f6fe339524e96.patch";
-      hash = "sha256-dfnT5P9Qsn/nSAr4Ysqo/olbLLfoZXvBRz33yzhN3J4=";
-    })
+devVersion.PEP440 
+
+(with commonLocations; resolveLocations {
+  inherit PyPI;
+  dev = GitHub.override (conf: {
+    owner = "lmcinnes";
+    rev = "refs/tags/release-${conf.version}";
+  });
+}) 
+
+).eval (conf: buildPythonPackage (populateFetchers deps conf // {
+  build-system = [
+    setuptools-scm
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     joblib
     llvmlite
     numba
@@ -43,7 +55,7 @@ buildPythonPackage rec {
   ];
 
   nativeCheckInputs = [
-    pytestCheckHook
+    pytest
   ];
 
   disabledTests = [
@@ -59,11 +71,4 @@ buildPythonPackage rec {
   pythonImportsCheck = [
     "pynndescent"
   ];
-
-  meta = with lib; {
-    description = "Nearest Neighbor Descent";
-    homepage = "https://github.com/lmcinnes/pynndescent";
-    license = licenses.bsd2;
-    #maintainers = with maintainers; [ mic92 ];
-  };
-}
+})) (import ./releases.nix)

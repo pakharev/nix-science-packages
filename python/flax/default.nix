@@ -10,7 +10,7 @@
 , einops
 , optax
 , pytest-xdist
-, pytestCheckHook
+, pytest
 , pythonRelaxDepsHook
 , pyyaml
 , tensorflow
@@ -29,7 +29,7 @@
 } 
 
 (conf: {
-  format = "pyproject";
+  pyproject = true;
   fetchers.src = "srcDev";
 }) 
 
@@ -44,12 +44,12 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  nativeBuildInputs = [ 
+  build-system = [ 
     setuptools-scm
     jaxlib pythonRelaxDepsHook 
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     jax
     matplotlib
     msgpack
@@ -72,7 +72,7 @@ devVersion.PEP440
   nativeCheckInputs = [
     keras
     pytest-xdist
-    pytestCheckHook
+    pytest
     tensorflow
   ];
 

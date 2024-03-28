@@ -1,24 +1,25 @@
 { lib
 , buildPythonPackage
 , setuptools-scm
+, pythonAtLeast
 , pythonOlder
-, numpy
-, fetchFromGitHub
+, unittestCheckHook
 , fetchPypi
+, fetchFromGitHub
 }@deps: with lib.packageConfigs; (trivial 
 
 {
-  pname = "numpy-groupies";
+  pname = "contextlib2";
   meta = {
-    description = "Optimised tools for group-indexing operations: aggregated sum and more";
-    homepage = "https://github.com/ml31415/numpy-groupies";
-    license = lib.licenses.bsd2;
+    description = "Backports and enhancements for the contextlib module";
+    license = lib.licenses.psfl;
+    homepage = "https://contextlib2.readthedocs.org/";
   };
 } 
 
 (conf: {
   pyproject = true;
-  disabled = pythonOlder "3.8";
+  disabled = pythonOlder "3.6" || pythonAtLeast "3.12";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
 }) 
@@ -28,8 +29,9 @@ devVersion.PEP440
 (with commonLocations; resolveLocations {
   inherit PyPI;
   dev = GitHub.override (conf: {
-    owner = "ml31415";
-    rev = "refs/tags/v${conf.version}";
+    owner = "alvistack";
+    repo = "jazzband-contextlib2";
+    rev = "refs/tags/release-${conf.version}";
   });
 }) 
 
@@ -38,7 +40,11 @@ devVersion.PEP440
     setuptools-scm
   ];
 
-  dependencies = [
-    numpy
+  nativeCheckInputs = [ 
+    unittestCheckHook
+  ];
+
+  pythonImportsCheck = [
+    "contextlib2"
   ];
 })) (import ./releases.nix)

@@ -16,7 +16,7 @@
 } 
 
 (conf: {
-  format = "pyproject";
+  pyproject = true;
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
 }) 
 
@@ -31,7 +31,7 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  nativeBuildInputs = [
+  build-system = [
     setuptools-scm poetry-core
   ];
 })) (import ./releases.nix)

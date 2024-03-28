@@ -1,5 +1,16 @@
 [
   {
+    date = "2024-03-01";
+    version = "1.1.2";
+    type = "minor";
+    sources = {
+      srcPyPI = {
+        location = "PyPI";
+        hash = "sha256-EEoRow6JlvXOqpB7jIG0ix9LOA1JLvLdm5pVd+2BsPk=";
+      };
+    };
+  }
+  {
     date = "2023-10-13";
     version = "1.0.4";
     type = "minor";

@@ -1,5 +1,16 @@
 [
   {
+    date = "2024-03-14";
+    version = "0.8.2";
+    type = "minor";
+    sources = {
+      srcDev = {
+        location = "dev";
+        hash = "sha256-UABgJGe1grUSkwOJpjeIoFqhXsqG//HlC1YyYPxXV+g=";
+      };
+    };
+  }
+  {
     date = "2024-01-23";
     version = "0.8.0";
     type = "major";

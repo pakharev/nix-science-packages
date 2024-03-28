@@ -1,16 +1,17 @@
 { lib
 , buildPythonPackage
-, setuptools-scm
-, six
+, hatchling
+, hatch-vcs
+, fetchFromGitHub
 , fetchPypi
 }@deps: with lib.packageConfigs; (trivial 
 
 {
-  pname = "IProgress";
+  pname = "hatch-docstring-description";
   meta = {
-    description = "Text progress bar library for Python";
-    homepage = "https://github.com/aebrahim/IProgress";
-    license = lib.licenses.mit;
+    description = "Hatch Docstring Description";
+    homepage = "https://github.com/flying-sheep/hatch-docstring-description/";
+    license = lib.licenses.gpl3;
   };
 } 
 
@@ -22,15 +23,14 @@
 devVersion.PEP440 
 
 (with commonLocations; resolveLocations {
-  inherit PyPI;
+  PyPI = PyPI.override {
+    pname = "hatch_docstring_description";
+  };
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
   build-system = [
-    setuptools-scm
-  ];
-
-  propagatedBuildInputs = [
-    six
+    hatchling
+    hatch-vcs
   ];
 })) (import ./releases.nix)

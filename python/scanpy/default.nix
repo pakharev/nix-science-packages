@@ -24,6 +24,7 @@
 , packaging
 , session-info
 , get-annotations
+, legacy-api-wrap
 , fetchFromGitHub
 , fetchPypi
 }@deps: with lib.packageConfigs; (trivial 
@@ -38,7 +39,7 @@
 } 
 
 (conf: {
-  format = "pyproject";
+  pyproject = true;
   disabled = pythonOlder "3.8";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
@@ -55,13 +56,13 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  nativeBuildInputs = if conf ? hatch then [ 
+  build-system = if conf ? hatch then [ 
     hatchling hatch-vcs 
   ] else [ 
     setuptools-scm flit-core
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     anndata
     numpy
     matplotlib
@@ -81,5 +82,6 @@ devVersion.PEP440
     packaging
     session-info
     get-annotations
+    legacy-api-wrap
   ];
 })) (import ./releases.nix)

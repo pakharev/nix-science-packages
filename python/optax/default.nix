@@ -1,44 +1,53 @@
 { lib
 , buildPythonPackage
 , setuptools-scm
-, pythonOlder
+, flit-core
+, absl-py
+, chex
+, jaxlib
 , numpy
 , fetchFromGitHub
-, fetchPypi
 }@deps: with lib.packageConfigs; (trivial 
 
 {
-  pname = "numpy-groupies";
+  pname = "optax";
   meta = {
-    description = "Optimised tools for group-indexing operations: aggregated sum and more";
-    homepage = "https://github.com/ml31415/numpy-groupies";
-    license = lib.licenses.bsd2;
+    description = "Gradient processing and optimization library for JAX";
+    homepage = "https://github.com/deepmind/optax/";
+    license = lib.licenses.asl20;
   };
 } 
 
 (conf: {
   pyproject = true;
-  disabled = pythonOlder "3.8";
-
-  fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
+  fetchers.src = "srcDev";
 }) 
 
 devVersion.PEP440 
 
 (with commonLocations; resolveLocations {
-  inherit PyPI;
   dev = GitHub.override (conf: {
-    owner = "ml31415";
+    owner = "deepmind";
     rev = "refs/tags/v${conf.version}";
   });
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  build-system = [
+  build-system = [ 
     setuptools-scm
+    flit-core
+  ];
+
+  buildInputs = [
+    jaxlib
   ];
 
   dependencies = [
+    absl-py
+    chex
     numpy
   ];
+
+  doCheck = false;
+
 })) (import ./releases.nix)

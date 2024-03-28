@@ -1,29 +1,30 @@
 { lib
 , buildPythonPackage
-, setuptools-scm
+, pytest
 , pythonOlder
+, setuptools-scm
+, dask
+, numba
 , numpy
 , scipy
-, h5py
-, numba
-, click
-, numpy-groupies
-, fetchFromGitHub
+, pytest-cov
+, pre-commit
 , fetchPypi
+, fetchFromGitHub
 }@deps: with lib.packageConfigs; (trivial 
 
 {
-  pname = "loompy";
+  pname = "sparse";
   meta = {
-    description = "Loom is an efficient file format for large omics datasets";
-    homepage = "http://loompy.org/";
-    license = lib.licenses.bsd2;
+    description = "Sparse n-dimensional arrays computations";
+    license = lib.licenses.bsd3;
+    homepage = "https://sparse.pydata.org/";
   };
 } 
 
 (conf: {
   pyproject = true;
-  disabled = pythonOlder "3.5";
+  disabled = pythonOlder "3.6";
 
   fetchers.src = if (conf.sources ? "srcPyPI") then "srcPyPI" else "srcDev";
 }) 
@@ -33,22 +34,35 @@ devVersion.PEP440
 (with commonLocations; resolveLocations {
   inherit PyPI;
   dev = GitHub.override (conf: {
-    owner = "linnarsson-lab";
+    owner = "pydata";
     rev = "refs/tags/${conf.version}";
   });
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  build-system = [ 
+  build-system = [
     setuptools-scm
   ];
 
   dependencies = [
+    numba
     numpy
     scipy
-    h5py
-    numba
-    click
-    numpy-groupies
+  ];
+
+  nativeCheckInputs = [
+    dask
+    pytest-cov
+    pre-commit
+    pytest
+  ];
+
+  pythonImportsCheck = [
+    "sparse"
+  ];
+
+  disabledTestPaths = [
+    # Too premature.
+    "tests/test_backends.py"
   ];
 })) (import ./releases.nix)

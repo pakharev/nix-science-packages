@@ -1,7 +1,6 @@
 { lib
 , buildPythonPackage
-, setuptools
-, wheel
+, setuptools-scm
 , pythonOlder
 , numpy
 , scikit-learn
@@ -33,7 +32,7 @@
 } 
 
 (conf: {
-  format = "setuptools";
+  pyproject = true;
   disabled = pythonOlder "3.7";
 
   fetchers.src = "srcDev";
@@ -50,15 +49,11 @@ devVersion.PEP440
 }) 
 
 ).eval (conf: buildPythonPackage (populateFetchers deps conf // {
-  
-  # No tests in archive
-  doCheck = false;
-
-  nativeBuildInputs = [ 
-    setuptools wheel
+  build-system = [ 
+    setuptools-scm
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     numpy
     scikit-learn
     pandas
@@ -77,4 +72,7 @@ devVersion.PEP440
     jupyter
     tensorflow
   ];
+
+  # No tests in archive
+  doCheck = false;
 })) (import ./releases.nix)

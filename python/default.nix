@@ -24,10 +24,6 @@ final: prev: {
       scvi-tools = self.callPackage ./scvi-tools {};
       session-info = self.callPackage ./session-info {};
       sparse = self.callPackage ./sparse {};
-      tensorflow = super.tensorflow.override {
-        tensorboardSupport = false;
-        tensorboard = null;
-      };
       umap-learn = self.callPackage ./umap-learn {};
       unitvelo = self.callPackage ./unitvelo {};
     });

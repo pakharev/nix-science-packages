@@ -1,5 +1,16 @@
 [
   {
+    date = "2023-11-28";
+    version = "0.1.10";
+    type = "minor";
+    sources = {
+      srcCRAN = {
+        location = "CRAN";
+        hash = "sha256-La3RPbUsdSYBMXKfqt0OQHMsr9uYN/Np37pwCUsSSao=";
+      };
+    };
+  }
+  {
     date = "2023-01-27";
     version = "0.1.9";
     type = "minor";

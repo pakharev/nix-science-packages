@@ -1,4 +1,15 @@
 [
+#  {
+#    date = "2024-04-26";
+#    version = "1.7-0";
+#    type = "minor";
+#    sources = {
+#      srcCRAN = {
+#        location = "CRAN";
+#        hash = "sha256-IUwJGrlC6dgQjoadHRdUQhwZECqlSPvZ/NsfZnp3sCo=";
+#      };
+#    };
+#  }
   {
     date = "2024-01-11";
     version = "1.6-5";

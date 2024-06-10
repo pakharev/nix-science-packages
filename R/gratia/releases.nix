@@ -1,5 +1,16 @@
 [
   {
+    date = "2024-03-27";
+    version = "0.9.0";
+    type = "minor";
+    sources = {
+      srcCRAN = {
+        location = "CRAN";
+        hash = "sha256-hePXnbNZI1OAh9pOgsVebIsil9zHKP03HcDnh5pr+YM=";
+      };
+    };
+  }
+  {
     date = "2023-10-03";
     devVersion = "0.9";
     type = "minor";
